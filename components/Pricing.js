@@ -1,11 +1,14 @@
 import config from "@/config";
 import ButtonCheckout from "./ButtonCheckout";
+import { useSession } from "next-auth/react";
 
 // <Pricing/> displays the pricing plans for your app
 // It's your Stripe config in config.js.stripe.plans[] that will be used to display the plans
 // <ButtonCheckout /> renders a button that will redirect the user to Stripe checkout called the /api/stripe/create-checkout API endpoint with the correct priceId
 
 const Pricing = () => {
+  const { data: session } = useSession();
+
   return (
     <section className="bg-base-200 overflow-hidden" id="pricing">
       <div className="py-24 px-8 max-w-5xl mx-auto">
@@ -89,7 +92,11 @@ const Pricing = () => {
                   </ul>
                 )}
                 <div className="space-y-2">
-                  <ButtonCheckout priceId={plan.priceId} />
+                  <ButtonCheckout
+                    priceId={plan.priceId}
+                    text={plan.name == "Free" ? "Current Plan" : "Buy Now"}
+                    disabled={plan.name == "Free" ? true : false}
+                  />
                 </div>
               </div>
             </div>

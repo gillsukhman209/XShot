@@ -21,8 +21,8 @@ const config = {
         // REQUIRED — Plan identifier for Stripe webhook
         priceId:
           process.env.NODE_ENV === "development"
-            ? "price_1QimnBD8N5yoknGML6L83bnT" // Replace with your dev price ID
-            : "price_1QimnBD8N5yoknGML6L83bnT", // Replace with your live price ID
+            ? "price_1Qin8nD1jNL8UMZHmAi7RL8U" // Replace with your dev price ID
+            : "price_1Qin8nD1jNL8UMZHmAi7RL8U", // Replace with your live price ID
         // Plan name displayed on the pricing page
         name: "Free",
         // Friendly description for the plan
@@ -42,16 +42,16 @@ const config = {
         isFeatured: true,
         priceId:
           process.env.NODE_ENV === "development"
-            ? "price_1QimnhD8N5yoknGMEFWNBEza" // Replace with your dev price ID
-            : "price_1QimnhD8N5yoknGMEFWNBEza", // Replace with your live price ID
+            ? "price_1Qin96D1jNL8UMZHFPtqEyCP" // Replace with your dev price ID
+            : "price_1Qin96D1jNL8UMZHFPtqEyCP", // Replace with your live price ID
         // Plan name displayed on the pricing page
         name: "Pro",
         // Friendly description for the plan
         description: "Unlock unlimited tracking and advanced features.",
         // Price displayed
-        price: 9.99, // Monthly price
+        price: 2.99, // Monthly price
         // Anchor price for discount (if applicable)
-        priceAnchor: 12.99,
+        priceAnchor: 5.99,
         features: [
           { name: "Unlimited friend connections" },
           { name: "Custom reminders & notifications" },

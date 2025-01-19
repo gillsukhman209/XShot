@@ -13,30 +13,26 @@ import Testimonials3 from "@/components/Testimonials3";
 export default function Home() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const [isLoadingSession, setIsLoadingSession] = useState(true); // Prevent flicker
 
   useEffect(() => {
     const checkSession = async () => {
       if (status === "loading") return; // Wait for session status to load
-      if (session && session.user) {
-        // If user is logged in, redirect to the dashboard
-        router.push("/dashboard");
-      } else {
-        // If not logged in, stop loading
-        setIsLoadingSession(false);
+
+      const res = await fetch("/api/auth/user/getCurrentUser");
+      const user = await res.json();
+
+      try {
+        if (user) {
+          if (user.user.hasAccess) {
+            router.push("/dashboard");
+          }
+        }
+      } catch (error) {
+        console.error("Error checking user access:", error);
       }
     };
     checkSession();
   }, [session, status, router]);
-
-  if (isLoadingSession) {
-    // Display loading screen while determining session state
-    return (
-      <div className="flex items-center justify-center h-screen bg-gray-100">
-        <p className="text-lg text-gray-600">Checking session...</p>
-      </div>
-    );
-  }
 
   // Render landing page if not logged in
   return (
