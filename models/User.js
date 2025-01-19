@@ -1,7 +1,22 @@
 import mongoose from "mongoose";
 import toJSON from "./plugins/toJSON";
 
-// USER SCHEMA
+const contactSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+  },
+  uniqueCode: {
+    type: String,
+    required: true,
+  },
+  relationship: {
+    type: String,
+    enum: ["owe", "owed"],
+    required: true,
+  },
+});
+
 const userSchema = mongoose.Schema(
   {
     name: {
@@ -47,25 +62,23 @@ const userSchema = mongoose.Schema(
       default: 0,
     },
     // Additional fields for app functionality
-    contacts: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User", // Reference to other users in the system
-      },
-    ],
-    debts: [
+    contacts: [contactSchema],
+    transactions: [
       {
         contact: {
           type: mongoose.Schema.Types.ObjectId,
           ref: "User",
+          required: true,
         },
         amount: {
           type: Number,
           required: true,
+          min: 0.01, // Ensure the amount is greater than 0
         },
         note: {
           type: String,
           trim: true,
+          maxlength: 255, // Prevent excessively long notes
         },
         date: {
           type: Date,
@@ -73,7 +86,7 @@ const userSchema = mongoose.Schema(
         },
         status: {
           type: String,
-          enum: ["owed", "lent", "paid"], // Status of the debt
+          enum: ["owed", "lent", "paid"],
           default: "owed",
         },
       },
