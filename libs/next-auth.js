@@ -3,6 +3,9 @@ import GoogleProvider from "next-auth/providers/google";
 import { MongoDBAdapter } from "@auth/mongodb-adapter";
 import config from "@/config";
 import connectMongo from "./mongo";
+function generateUniqueCode() {
+  return Math.random().toString(36).substring(2, 8).toUpperCase(); // Example: AB1234
+}
 
 export const authOptions = {
   // Set any random key in .env.local
@@ -19,6 +22,7 @@ export const authOptions = {
           email: profile.email,
           image: profile.picture,
           createdAt: new Date(),
+          uniqueCode: generateUniqueCode(),
         };
       },
     }),

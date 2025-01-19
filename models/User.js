@@ -17,6 +17,7 @@ const userSchema = mongoose.Schema(
     image: {
       type: String,
     },
+    uniqueCode: { type: String, unique: true }, // Unique code for each user
     customerId: {
       type: String,
       validate(value) {
@@ -33,8 +34,20 @@ const userSchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    totalOwed: {
+      type: Number,
+      default: 0,
+    },
+    totalOwe: {
+      type: Number,
+      default: 0,
+    },
+    net: {
+      type: Number,
+      default: 0,
+    },
     // Additional fields for app functionality
-    friends: [
+    contacts: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User", // Reference to other users in the system
@@ -42,9 +55,9 @@ const userSchema = mongoose.Schema(
     ],
     debts: [
       {
-        friend: {
+        contact: {
           type: mongoose.Schema.Types.ObjectId,
-          ref: "User", // Reference to a friend
+          ref: "User",
         },
         amount: {
           type: Number,

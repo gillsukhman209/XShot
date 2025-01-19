@@ -34,7 +34,7 @@ const Hero = () => {
         </p>
 
         {session && session.user ? (
-          <ButtonCheckout text="Buy Now" />
+          <ButtonCheckout text="Buy Now" priceId={config.stripe.plans[1].id} />
         ) : (
           <ButtonSignin extraStyle={"btn-primary"} text="Get Started" />
         )}

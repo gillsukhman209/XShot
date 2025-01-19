@@ -59,8 +59,6 @@ const ButtonAccount = () => {
               </span>
             )}
 
-            {session?.user?.name || "Account"}
-
             {isLoading ? (
               <span className="loading loading-spinner loading-xs"></span>
             ) : (

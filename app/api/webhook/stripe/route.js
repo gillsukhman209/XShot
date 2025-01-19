@@ -67,8 +67,11 @@ export async function POST(req) {
         user.hasAccess = true;
 
         // Initialize empty friends and debts arrays if not already present
-        user.friends = user.friends || [];
+        user.contacts = user.contacts || [];
         user.debts = user.debts || [];
+        user.totalOwed = 0;
+        user.totalOwe = 0;
+        user.net = 0;
 
         await user.save();
 
