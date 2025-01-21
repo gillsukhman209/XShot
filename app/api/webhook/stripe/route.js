@@ -69,8 +69,8 @@ export async function POST(req) {
         // Initialize empty friends and debts arrays if not already present
         user.contacts = user.contacts || [];
         user.debts = user.debts || [];
-        user.totalOwed = 0;
-        user.totalOwe = 0;
+        user.totalLent = 0;
+        user.totalBorrowed = 0;
         user.net = 0;
 
         await user.save();

@@ -11,11 +11,11 @@ const contactSchema = new mongoose.Schema({
     required: true,
   },
 
-  totalOwed: {
+  totalLent: {
     type: Number,
     default: 0,
   },
-  totalOwe: {
+  totalBorrowed: {
     type: Number,
     default: 0,
   },
@@ -53,11 +53,11 @@ const userSchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    totalOwed: {
+    totalLent: {
       type: Number,
       default: 0,
     },
-    totalOwe: {
+    totalBorrowed: {
       type: Number,
       default: 0,
     },
@@ -90,8 +90,8 @@ const userSchema = mongoose.Schema(
         },
         status: {
           type: String,
-          enum: ["owed", "lent", "paid"],
-          default: "owed",
+          enum: ["borrowed", "lent", "paid"],
+          default: "borrowed",
         },
       },
     ],

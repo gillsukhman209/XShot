@@ -1,7 +1,7 @@
 import React from "react";
 
-function Contact({ contact, user }) {
-  let balance = contact.totalOwed - contact.totalOwe;
+function Contact({ contact }) {
+  let balance = contact.totalLent - contact.totalBorrowed;
   let textBalance = Math.abs(balance);
   const owesMessage =
     balance < 0 ? `You owe $${textBalance}` : `Owes you $${textBalance}`;

@@ -23,7 +23,6 @@ export async function GET() {
   return NextResponse.json({ contacts: user.contacts });
 }
 export async function POST(req) {
-  console.log("POST request received");
   const session = await getServerSession(authOptions);
 
   if (!session || !session.user) {
@@ -31,9 +30,6 @@ export async function POST(req) {
   }
 
   const { uniqueCode, name } = await req.json();
-
-  console.log("uniqueCode", uniqueCode);
-  console.log("name", name);
 
   if (!uniqueCode || !name) {
     return NextResponse.json(
@@ -46,7 +42,6 @@ export async function POST(req) {
 
   // Find the current user
   const currentUser = await User.findById(session.user.id);
-  console.log("currentUser", currentUser);
 
   if (!currentUser) {
     return NextResponse.json({ error: "User not found" }, { status: 404 });
@@ -54,7 +49,7 @@ export async function POST(req) {
 
   // Find the user with the given unique code
   const contactUser = await User.findOne({ uniqueCode });
-  console.log("contactUser", contactUser);
+
   if (!contactUser) {
     return NextResponse.json(
       { error: "Contact with the provided unique code does not exist" },
@@ -67,8 +62,6 @@ export async function POST(req) {
     (contact) => contact.uniqueCode === uniqueCode
   );
 
-  console.log("alreadyInContacts", alreadyInContacts);
-
   if (alreadyInContacts) {
     return NextResponse.json(
       { error: "This contact is already in your contacts list" },
@@ -78,9 +71,9 @@ export async function POST(req) {
 
   // Add the contact to the current user's contacts list
   currentUser.contacts.push({
-    name: contactUser.name,
+    name: name,
     uniqueCode: contactUser.uniqueCode,
-    relationship: "owe", // Define the relationship as per your logic
+    relationship: "lent", // Define the relationship as per your logic
   });
   await currentUser.save();
 
@@ -93,7 +86,7 @@ export async function POST(req) {
     contactUser.contacts.push({
       name: currentUser.name,
       uniqueCode: currentUser.uniqueCode,
-      relationship: "owed", // Define the reverse relationship
+      relationship: "borrowed", // Define the reverse relationship
     });
     await contactUser.save();
   }
