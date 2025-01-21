@@ -48,6 +48,7 @@ export default function Dashboard() {
     try {
       const res = await axios.post("/api/mongo/transaction", {
         contactUniqueCode: selectedContact,
+
         amount: transactionAmount,
         type: transactionType,
       });
@@ -84,7 +85,13 @@ export default function Dashboard() {
         </div>
         <div>
           <h2 className="text-xl font-semibold text-gray-800">Net</h2>
-          <p className="text-3xl font-bold text-green-600">
+          <p
+            className={`text-3xl font-bold ${
+              user?.totalLent - user?.totalBorrowed < 0
+                ? "text-red-600"
+                : "text-green-600"
+            }`}
+          >
             ${user?.totalLent - user?.totalBorrowed}
           </p>
         </div>
@@ -201,7 +208,6 @@ export default function Dashboard() {
                   value={selectedContact}
                   onChange={(e) => {
                     setSelectedContact(e.target.value);
-                    console.log("selectedContact", e.target.value);
                   }}
                   className="border p-3 rounded w-full mt-1"
                 >

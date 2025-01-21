@@ -8,14 +8,27 @@ function Transactions({ transaction }) {
   });
 
   return (
-    <div className="flex h-[100px] w-full items-center justify-between rounded-lg bg-gray-50 p-4 shadow-xl">
+    <div className="flex h-[100px] w-full items-center justify-between rounded-lg  p-4 shadow-lg ">
       <div>
-        <h3 className="font-bold text-gray-800">{transaction.note}</h3>
-        <p className="text-sm text-gray-600">
-          {formattedDate} - ${transaction.amount}
+        <h3 className="text-lg font-bold text-black">
+          {transaction.status === "lent" ? "You lent to " : "You borrowed from"}{" "}
+          {""}
+          {transaction.contact.name}
+        </h3>
+        <p className="text-sm text-black">
+          {formattedDate} -{" "}
+          <span
+            className={`font-medium text-md ${
+              transaction.status === "borrowed"
+                ? "text-red-600"
+                : "text-green-600"
+            }`}
+          >
+            ${transaction.amount}
+          </span>
         </p>
       </div>
-      <button className="w-full max-w-[140px] rounded bg-indigo-600 px-4 py-2 text-sm text-white hover:bg-indigo-700">
+      <button className="w-full max-w-[140px] rounded-lg bg-white px-4 py-2 text-sm font-semibold text-indigo-600 shadow-md hover:bg-gray-100 transition duration-300">
         View Details
       </button>
     </div>

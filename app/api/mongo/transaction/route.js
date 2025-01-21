@@ -30,7 +30,6 @@ export async function POST(req) {
 
   await connectMongo();
 
-  // Find the current user
   const currentUser = await User.findById(session.user.id);
 
   if (!currentUser) {
@@ -49,33 +48,44 @@ export async function POST(req) {
 
   // Add the transaction to the current user's transaction list
   currentUser.transactions.push({
-    contact: contactUser._id,
+    contact: contactUser,
     amount,
     status: type === "borrowed" ? "borrowed" : "lent",
   });
 
   console.log("type is", type);
+
+  const contact = currentUser.contacts.find(
+    (contact) => contact.uniqueCode === contactUniqueCode
+  );
   // Update the total amounts for the current user
   if (type === "borrowed") {
     currentUser.totalBorrowed += Number(amount); // Amount the user borrowed
+    contact.totalLent += Number(amount);
   } else {
     currentUser.totalLent += Number(amount); // Amount the user lent
+    contact.totalBorrowed += Number(amount);
   }
 
   await currentUser.save();
 
   // Add the reverse transaction to the contact user's transaction list
   contactUser.transactions.push({
-    contact: currentUser._id,
+    contact: currentUser,
     amount,
     status: type === "borrowed" ? "lent" : "borrowed",
   });
 
+  const contactUserContact = contactUser.contacts.find(
+    (contact) => contact.uniqueCode === currentUser.uniqueCode
+  );
   // Update the total amounts for the contact user
   if (type === "borrowed") {
     contactUser.totalLent += Number(amount); // Amount the contact lent
+    contactUserContact.totalLent += Number(amount);
   } else {
     contactUser.totalBorrowed += Number(amount); // Amount the contact borrowed
+    contactUserContact.totalBorrowed += Number(amount);
   }
 
   await contactUser.save();

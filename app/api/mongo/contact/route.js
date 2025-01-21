@@ -71,7 +71,7 @@ export async function POST(req) {
 
   // Add the contact to the current user's contacts list
   currentUser.contacts.push({
-    name: name,
+    name: contactUser.name,
     uniqueCode: contactUser.uniqueCode,
     relationship: "lent", // Define the relationship as per your logic
   });

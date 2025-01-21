@@ -1,12 +1,15 @@
 import React from "react";
 
 function Contact({ contact }) {
+  console.log("in contact.js", "contact.totalLent", contact.totalLent);
+  console.log("in contact.js", "contact.totalBorrowed", contact.totalBorrowed);
   let balance = contact.totalLent - contact.totalBorrowed;
+  console.log("in contact.js", "balance", balance);
   let textBalance = Math.abs(balance);
   const owesMessage =
-    balance < 0 ? `You owe $${textBalance}` : `Owes you $${textBalance}`;
+    balance > 0 ? `You owe $${textBalance}` : `Owes you $${textBalance}`;
 
-  const buttonText = balance < 0 ? "Pay" : "Remind";
+  const buttonText = balance > 0 ? "Pay" : "Remind";
 
   return (
     <div className="flex h-[100px] w-full items-center justify-between rounded-lg bg-gray-50 p-4 shadow-xl">
@@ -16,7 +19,7 @@ function Contact({ contact }) {
           <h3 className="font-bold text-gray-800">{contact.name}</h3>
           <p
             className={`text-sm ${
-              balance < 0 ? "text-red-600" : "text-green-600"
+              balance > 0 ? "text-red-600" : "text-green-600"
             }`}
           >
             {owesMessage}

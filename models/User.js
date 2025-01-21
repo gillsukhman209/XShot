@@ -70,8 +70,7 @@ const userSchema = mongoose.Schema(
     transactions: [
       {
         contact: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "User",
+          type: contactSchema,
           required: true,
         },
         amount: {
