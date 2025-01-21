@@ -1,5 +1,7 @@
 import React from "react";
-
+// 209 = W8D13A
+// 1603 = A29R2H
+// 72 = VRBO07
 function Contact({ contact }) {
   console.log("in contact.js", "contact.totalLent", contact.totalLent);
   console.log("in contact.js", "contact.totalBorrowed", contact.totalBorrowed);
@@ -14,16 +16,18 @@ function Contact({ contact }) {
   return (
     <div className="flex h-[100px] w-full items-center justify-between rounded-lg bg-gray-50 p-4 shadow-xl">
       <div className="flex items-center gap-3">
-        <span className="text-lg text-red-600">↓</span>
+        {balance !== 0 && <span className="text-lg text-red-600">↓</span>}
         <div>
           <h3 className="font-bold text-gray-800">{contact.name}</h3>
-          <p
-            className={`text-sm ${
-              balance > 0 ? "text-red-600" : "text-green-600"
-            }`}
-          >
-            {owesMessage}
-          </p>
+          {balance !== 0 && (
+            <p
+              className={`text-sm ${
+                balance > 0 ? "text-red-600" : "text-green-600"
+              }`}
+            >
+              {owesMessage}
+            </p>
+          )}
         </div>
       </div>
       <button className="w-full max-w-[140px] rounded bg-indigo-600 px-4 py-2 text-sm text-white">
