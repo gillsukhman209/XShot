@@ -10,10 +10,14 @@ const contactSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  relationship: {
-    type: String,
-    enum: ["owe", "owed"],
-    required: true,
+
+  totalOwed: {
+    type: Number,
+    default: 0,
+  },
+  totalOwe: {
+    type: Number,
+    default: 0,
   },
 });
 

@@ -59,7 +59,9 @@ export default function Dashboard() {
         <section>
           <div className="grid grid-cols-1 gap-4 rounded-2xl p-6 shadow-2xl bg-white">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold text-gray-800">Contacts</h2>
+              <h2 className="text-xl font-semibold text-gray-800">
+                Contacts {user?.uniqueCode}
+              </h2>
               <button
                 onClick={() => setShowPopup(true)}
                 className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-800 text-xl text-white shadow hover:bg-indigo-700"
@@ -68,11 +70,7 @@ export default function Dashboard() {
               </button>
             </div>
             {user?.contacts.map((contact) => (
-              <Contact
-                key={contact.id}
-                contact={contact}
-                userTotalOwe={user.totalOwe}
-              />
+              <Contact key={contact.id} contact={contact} user={user} />
             ))}
           </div>
         </section>

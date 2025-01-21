@@ -9,7 +9,7 @@ import config from "@/config";
 // By default, it doesn't force users to be authenticated. But if they are, it will prefill the Checkout data with their email and/or credit card. You can change that in the API route
 // You can also change the mode to "subscription" if you want to create a subscription instead of a one-time payment
 const ButtonCheckout = ({
-  priceId,
+  priceId = "price_1Qin8nD1jNL8UMZHmAi7RL8U",
   mode = "subscription",
   text = "Buy Now",
   disabled = false,
