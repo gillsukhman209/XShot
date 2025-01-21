@@ -5,7 +5,14 @@ import User from "@/models/User";
 
 import { NextResponse } from "next/server";
 
-export async function GET() {
+export async function GET(req) {
+  console.log("In contact route GET method");
+
+  // Parse the uniqueCode from the query parameters
+  const { searchParams } = new URL(req.url);
+  const uniqueCode = searchParams.get("uniqueCode");
+  console.log("uniqueCode:", uniqueCode);
+
   const session = await getServerSession(authOptions);
 
   if (!session || !session.user) {
@@ -14,26 +21,44 @@ export async function GET() {
 
   await connectMongo();
 
-  const user = await User.findById(session.user.id).populate("contacts");
-
-  if (!user) {
-    return NextResponse.json({ error: "User not found" }, { status: 404 });
+  if (!uniqueCode) {
+    return NextResponse.json(
+      { error: "Unique code is required" },
+      { status: 400 }
+    );
   }
 
-  return NextResponse.json({ contacts: user.contacts });
+  // Find the user with the given unique code
+  const contactUser = await User.findOne({ uniqueCode });
+
+  if (!contactUser) {
+    return NextResponse.json(
+      { error: "Contact with the provided unique code does not exist" },
+      { status: 404 }
+    );
+  }
+
+  return NextResponse.json({
+    contact: {
+      name: contactUser.name,
+      uniqueCode: contactUser.uniqueCode,
+    },
+  });
 }
 export async function POST(req) {
+  console.log("In contact route POST method");
   const session = await getServerSession(authOptions);
 
   if (!session || !session.user) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
 
-  const { uniqueCode, name } = await req.json();
+  const { uniqueCode } = await req.json();
+  console.log("uniqueCode", uniqueCode);
 
-  if (!uniqueCode || !name) {
+  if (!uniqueCode) {
     return NextResponse.json(
-      { error: "Unique code and name are required" },
+      { error: "Unique code is required" },
       { status: 400 }
     );
   }
@@ -42,14 +67,14 @@ export async function POST(req) {
 
   // Find the current user
   const currentUser = await User.findById(session.user.id);
-
+  console.log("currentUser", currentUser);
   if (!currentUser) {
     return NextResponse.json({ error: "User not found" }, { status: 404 });
   }
 
   // Find the user with the given unique code
   const contactUser = await User.findOne({ uniqueCode });
-
+  console.log("contactUser", contactUser);
   if (!contactUser) {
     return NextResponse.json(
       { error: "Contact with the provided unique code does not exist" },

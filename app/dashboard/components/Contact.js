@@ -1,7 +1,5 @@
 import React from "react";
-// 209 = W8D13A
-// 1603 = A29R2H
-// 72 = VRBO07
+
 function Contact({ contact }) {
   console.log("in contact.js", "contact.totalLent", contact.totalLent);
   console.log("in contact.js", "contact.totalBorrowed", contact.totalBorrowed);

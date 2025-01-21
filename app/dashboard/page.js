@@ -12,9 +12,9 @@ export const dynamic = "force-dynamic";
 export default function Dashboard() {
   const [user, setUser] = useState(null);
   const [uniqueCode, setUniqueCode] = useState("");
+  const [foundContact, setFoundContact] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
   const [showTransactionPopup, setShowTransactionPopup] = useState(false);
-  const [name, setName] = useState("");
   const [selectedContact, setSelectedContact] = useState("");
   const [transactionType, setTransactionType] = useState("borrowed");
   const [transactionAmount, setTransactionAmount] = useState("");
@@ -25,18 +25,53 @@ export default function Dashboard() {
     });
   }, []);
 
-  const handleSubmit = async () => {
-    const res = await axios.post("/api/mongo/contact", {
-      uniqueCode: uniqueCode,
-      name: name,
-    });
-    if (res.status === 200) {
-      toast.success("Contact added successfully");
-    } else {
-      toast.error("Failed to add contact, check unique code");
+  const handleSearchContact = async () => {
+    if (!uniqueCode) {
+      toast.error("Please enter a unique code");
+      return;
     }
-    setShowPopup(false);
-    setUniqueCode("");
+
+    console.log("uniqueCode", uniqueCode);
+
+    try {
+      const res = await axios.get(
+        `/api/mongo/contact?uniqueCode=${uniqueCode}`
+      );
+      if (res.status === 200 && res.data.contact) {
+        setFoundContact(res.data.contact);
+      } else {
+        setFoundContact(null);
+        toast.error("No contact found with the provided unique code");
+      }
+    } catch (error) {
+      setFoundContact(null);
+      toast.error("An error occurred while searching for the contact");
+    }
+  };
+
+  const handleAddContact = async () => {
+    try {
+      console.log("foundContact", foundContact);
+      const res = await axios.post("/api/mongo/contact", {
+        uniqueCode: foundContact.uniqueCode,
+      });
+
+      if (res.status === 200) {
+        toast.success("Contact added successfully");
+        setUser((prevUser) => ({
+          ...prevUser,
+          contacts: [...prevUser.contacts, res.data.contact],
+        }));
+      } else {
+        toast.error(res.data.error);
+      }
+
+      setFoundContact(null);
+      setUniqueCode("");
+      setShowPopup(false);
+    } catch (error) {
+      toast.error("An error occurred while adding the contact");
+    }
   };
 
   const handleTransactionSubmit = async () => {
@@ -48,7 +83,6 @@ export default function Dashboard() {
     try {
       const res = await axios.post("/api/mongo/transaction", {
         contactUniqueCode: selectedContact,
-
         amount: transactionAmount,
         type: transactionType,
       });
@@ -120,25 +154,9 @@ export default function Dashboard() {
 
         {/* Popup for adding contact */}
         {showPopup && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 ">
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
             <div className="bg-white p-10 rounded-lg shadow-lg w-96">
               <h2 className="text-2xl font-semibold">Add Contact</h2>
-              <div className="mt-6">
-                <label
-                  className="block text-lg font-medium text-gray-700"
-                  htmlFor="name"
-                >
-                  Name
-                </label>
-                <input
-                  id="name"
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Enter name"
-                  className="border p-3 rounded w-full mt-1"
-                />
-              </div>
               <div className="mt-6">
                 <label
                   className="block text-lg font-medium text-gray-700"
@@ -154,17 +172,39 @@ export default function Dashboard() {
                   placeholder="Enter unique code"
                   className="border p-3 rounded w-full mt-1"
                 />
+                <button
+                  onClick={handleSearchContact}
+                  className="mt-4 bg-blue-500 text-white px-4 py-2 rounded shadow hover:bg-blue-600"
+                >
+                  Search
+                </button>
               </div>
+
+              {foundContact && (
+                <div className="mt-6 bg-gray-100 p-4 rounded-lg shadow">
+                  <h3 className="text-lg font-semibold text-gray-800">
+                    {foundContact.name}
+                  </h3>
+                  <p className="text-sm text-gray-600">
+                    Unique Code: {foundContact.uniqueCode}
+                  </p>
+                  <button
+                    onClick={handleAddContact}
+                    className="mt-4 bg-green-500 text-white px-4 py-2 rounded shadow hover:bg-green-600"
+                  >
+                    Add Contact
+                  </button>
+                </div>
+              )}
+
               <div className="flex justify-end mt-6">
                 <button
-                  onClick={handleSubmit}
-                  className="bg-blue-500 text-white px-6 py-3 rounded"
-                >
-                  Submit
-                </button>
-                <button
-                  onClick={() => setShowPopup(false)}
-                  className="ml-2 bg-gray-300 px-6 py-3 rounded"
+                  onClick={() => {
+                    setShowPopup(false);
+                    setUniqueCode("");
+                    setFoundContact(null);
+                  }}
+                  className="bg-gray-300 px-6 py-3 rounded"
                 >
                   Cancel
                 </button>
@@ -193,7 +233,7 @@ export default function Dashboard() {
 
         {/* Popup for adding transaction */}
         {showTransactionPopup && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 ">
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
             <div className="bg-white p-10 rounded-lg shadow-lg w-96">
               <h2 className="text-2xl font-semibold">Add Transaction</h2>
               <div className="mt-6">
@@ -206,15 +246,13 @@ export default function Dashboard() {
                 <select
                   id="contact"
                   value={selectedContact}
-                  onChange={(e) => {
-                    setSelectedContact(e.target.value);
-                  }}
+                  onChange={(e) => setSelectedContact(e.target.value)}
                   className="border p-3 rounded w-full mt-1"
                 >
                   <option value="">Select a contact</option>
                   {user?.contacts.map((contact) => (
-                    <option key={contact.uniqueCode} value={contact.uniqueCode}>
-                      {contact.name} {contact.uniqueCode}
+                    <option key={contact.id} value={contact.uniqueCode}>
+                      {contact.name} ({contact.uniqueCode})
                     </option>
                   ))}
                 </select>
