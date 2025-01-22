@@ -3,16 +3,10 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment } from "react";
 
-// A simple modal component which can be shown/hidden with a boolean and a function
-// Because of the setIsModalOpen function, you can't use it in a server component.
-const Modal = ({ isModalOpen, setIsModalOpen }) => {
+const Modal = ({ isModalOpen, onClose, children }) => {
   return (
     <Transition appear show={isModalOpen} as={Fragment}>
-      <Dialog
-        as="div"
-        className="relative z-50"
-        onClose={() => setIsModalOpen(false)}
-      >
+      <Dialog as="div" className="relative z-50" onClose={onClose}>
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"
@@ -26,7 +20,7 @@ const Modal = ({ isModalOpen, setIsModalOpen }) => {
         </Transition.Child>
 
         <div className="fixed inset-0 overflow-y-auto">
-          <div className="flex min-h-full overflow-hidden items-start md:items-center justify-center p-2">
+          <div className="flex min-h-full items-center justify-center p-4">
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"
@@ -36,27 +30,32 @@ const Modal = ({ isModalOpen, setIsModalOpen }) => {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="relative w-full max-w-3xl h-full overflow-visible transform text-left align-middle shadow-xl transition-all rounded-xl bg-base-100 p-6 md:p-8">
+              <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-lg bg-white p-6 shadow-xl transition-all">
                 <div className="flex justify-between items-center mb-4">
-                  <Dialog.Title as="h2" className="font-semibold">
-                    I&apos;m a modal
+                  <Dialog.Title as="h3" className="text-lg font-bold">
+                    Confirmation
                   </Dialog.Title>
                   <button
-                    className="btn btn-square btn-ghost btn-sm"
-                    onClick={() => setIsModalOpen(false)}
+                    className="text-gray-400 hover:text-gray-600"
+                    onClick={onClose}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                      className="w-5 h-5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={2}
+                      stroke="currentColor"
+                      className="w-6 h-6"
                     >
-                      <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M6 18L18 6M6 6l12 12"
+                      />
                     </svg>
                   </button>
                 </div>
-
-                <section>And here is my content</section>
+                <div>{children}</div>
               </Dialog.Panel>
             </Transition.Child>
           </div>

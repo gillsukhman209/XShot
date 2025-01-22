@@ -5,12 +5,15 @@ import axios from "axios";
 import Header from "../../../../dashboard/components/Header";
 import { FaTrash } from "react-icons/fa";
 import { toast } from "react-hot-toast";
+import Modal from "../../../../../components/Modal";
+
 export default function ContactDetails() {
   const pathname = usePathname();
   const contactId = pathname.split("/").pop(); // Extract `contactId` from the URL
   const [contact, setContact] = useState(null);
   const [transactions, setTransactions] = useState([]);
   const [summary, setSummary] = useState({ lent: 0, borrowed: 0 });
+  const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
 
   useEffect(() => {
     const fetchContactDetails = async () => {
@@ -67,11 +70,17 @@ export default function ContactDetails() {
       );
       if (res.status === 200) {
         toast.success("Contact deleted successfully");
+        window.location.href = "/dashboard";
+        setIsModalOpen(false);
         // Optionally, you can add a callback to refresh the contact list or update the state
       }
     } catch (error) {
       toast.error("An error occurred while deleting the contact");
     }
+  };
+
+  const confirmDeleteContact = () => {
+    setIsModalOpen(true); // Open the modal to confirm deletion
   };
 
   return (
@@ -82,8 +91,11 @@ export default function ContactDetails() {
         <h2 className="mt-6 text-2xl font-bold  flex items-center justify-center  flex-1">
           {contact.name}
         </h2>
-        <button onClick={handleDeleteContact} className=" h-full mt-6">
-          <FaTrash className="text-red-600" />
+        <button
+          onClick={confirmDeleteContact}
+          className="w-full max-w-[80px] rounded bg-indigo-600 px-4 py-2 text-sm text-white hover:bg-indigo-70 mt-6"
+        >
+          Delete
         </button>
       </div>
 
@@ -147,6 +159,27 @@ export default function ContactDetails() {
           </li>
         ))}
       </ul>
+
+      <Modal isModalOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+        <p>
+          This action is irreversible. Are you sure you want to reset your
+          progress?
+        </p>
+        <div className="flex justify-end space-x-4 mt-4">
+          <button
+            className="px-4 py-2 bg-gray-300 rounded-md"
+            onClick={() => setIsModalOpen(false)}
+          >
+            Cancel
+          </button>
+          <button
+            className="px-4 py-2 bg-red-500 rounded-md"
+            onClick={handleDeleteContact}
+          >
+            Confirm
+          </button>
+        </div>
+      </Modal>
     </div>
   );
 }
