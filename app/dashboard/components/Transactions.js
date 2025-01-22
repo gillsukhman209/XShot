@@ -1,6 +1,8 @@
 import React from "react";
+import { useRouter } from "next/navigation";
 
 function Transactions({ transaction }) {
+  const router = useRouter();
   const formattedDate = new Date(transaction.date).toLocaleString("default", {
     year: "numeric",
     month: "long",
@@ -28,7 +30,12 @@ function Transactions({ transaction }) {
           </span>
         </p>
       </div>
-      <button className="w-full max-w-[140px] rounded-lg bg-white px-4 py-2 text-sm font-semibold text-indigo-600 shadow-md hover:bg-gray-100 transition duration-300">
+      <button
+        onClick={() =>
+          router.push(`/api/mongo/contact/${transaction.contact.uniqueCode}`)
+        }
+        className="w-full max-w-[140px] rounded bg-indigo-600 px-4 py-2 text-sm text-white hover:bg-indigo-700"
+      >
         View Details
       </button>
     </div>

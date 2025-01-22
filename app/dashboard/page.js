@@ -108,13 +108,16 @@ export default function Dashboard() {
         <div>
           <h2 className="text-xl font-semibold text-gray-800">Lent</h2>
           <p className="text-3xl font-bold text-green-600">
-            ${user?.totalLent}
+            ${user?.totalLent?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
           </p>
         </div>
         <div>
           <h2 className="text-xl font-semibold text-gray-800">Borrowed</h2>
           <p className="text-3xl font-bold text-red-600">
-            ${user?.totalBorrowed}
+            $
+            {user?.totalBorrowed
+              ?.toString()
+              .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
           </p>
         </div>
         <div>
@@ -126,7 +129,10 @@ export default function Dashboard() {
                 : "text-green-600"
             }`}
           >
-            ${user?.totalLent - user?.totalBorrowed}
+            $
+            {(user?.totalLent - user?.totalBorrowed)
+              ?.toString()
+              .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
           </p>
         </div>
       </section>

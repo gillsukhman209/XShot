@@ -36,10 +36,7 @@ export async function GET(req) {
   }
 
   return NextResponse.json({
-    contact: {
-      name: contactUser.name,
-      uniqueCode: contactUser.uniqueCode,
-    },
+    contact: contactUser,
   });
 }
 

@@ -82,10 +82,10 @@ export async function POST(req) {
   // Update the total amounts for the contact user
   if (type === "borrowed") {
     contactUser.totalLent += Number(amount); // Amount the contact lent
-    contactUserContact.totalLent += Number(amount);
+    contactUserContact.totalBorrowed += Number(amount);
   } else {
     contactUser.totalBorrowed += Number(amount); // Amount the contact borrowed
-    contactUserContact.totalBorrowed += Number(amount);
+    contactUserContact.totalLent += Number(amount);
   }
 
   await contactUser.save();

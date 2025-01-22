@@ -1,13 +1,12 @@
 import React from "react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
-
+import { FaTrash } from "react-icons/fa";
+import { useRouter } from "next/navigation";
 function Contact({ contact }) {
-  console.log("in contact.js", "contact.totalLent", contact.totalLent);
-  console.log("in contact.js", "contact.totalBorrowed", contact.totalBorrowed);
   let balance = contact.totalLent - contact.totalBorrowed;
-  console.log("in contact.js", "balance", balance);
 
+  const router = useRouter();
   // Check if balance is a number
   if (isNaN(balance)) {
     return null; // Hide the component if balance is NaN
@@ -38,9 +37,8 @@ function Contact({ contact }) {
   return (
     <div className="flex h-[100px] w-full items-center justify-between rounded-lg bg-gray-50 p-4 shadow-xl">
       <div className="flex items-center gap-3">
-        {balance !== 0 && <span className="text-lg text-red-600">↓</span>}
-        <button onClick={handleDeleteContact} className="text-red-600">
-          🗑️
+        <button onClick={handleDeleteContact}>
+          <FaTrash />
         </button>
         <div>
           <h3 className="font-bold text-gray-800">{contact.name}</h3>
@@ -55,8 +53,11 @@ function Contact({ contact }) {
           )}
         </div>
       </div>
-      <button className="w-full max-w-[140px] rounded bg-indigo-600 px-4 py-2 text-sm text-white">
-        {buttonText}
+      <button
+        onClick={() => router.push(`/api/mongo/contact/${contact.uniqueCode}`)}
+        className="w-full max-w-[140px] rounded bg-indigo-600 px-4 py-2 text-sm text-white"
+      >
+        Contact Details
       </button>
     </div>
   );
