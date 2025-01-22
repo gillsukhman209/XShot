@@ -18,6 +18,7 @@ export default function Dashboard() {
   const [selectedContact, setSelectedContact] = useState("");
   const [transactionType, setTransactionType] = useState("borrowed");
   const [transactionAmount, setTransactionAmount] = useState("");
+  const [transactionNote, setTransactionNote] = useState("");
 
   useEffect(() => {
     axios.get("/api/auth/user/getCurrentUser").then((res) => {
@@ -85,6 +86,7 @@ export default function Dashboard() {
         contactUniqueCode: selectedContact,
         amount: transactionAmount,
         type: transactionType,
+        note: transactionNote,
       });
 
       if (res.status === 200) {
@@ -293,6 +295,22 @@ export default function Dashboard() {
                   value={transactionAmount}
                   onChange={(e) => setTransactionAmount(e.target.value)}
                   placeholder="Enter amount"
+                  className="border p-3 rounded w-full mt-1"
+                />
+              </div>
+              <div className="mt-6">
+                <label
+                  className="block text-lg font-medium text-gray-700"
+                  htmlFor="note"
+                >
+                  Note
+                </label>
+                <input
+                  id="note"
+                  type="text"
+                  value={transactionNote}
+                  onChange={(e) => setTransactionNote(e.target.value)}
+                  placeholder="Add a note (optional)"
                   className="border p-3 rounded w-full mt-1"
                 />
               </div>

@@ -83,6 +83,23 @@ export default function ContactDetails() {
     setIsModalOpen(true); // Open the modal to confirm deletion
   };
 
+  const handleDeleteTransaction = async (transactionId) => {
+    try {
+      const res = await axios.delete(`/api/mongo/transaction`, {
+        data: { transactionId },
+      });
+      if (res.status === 200) {
+        toast.success("Transaction deleted successfully");
+        // Refresh transactions after deletion
+        setTransactions((prev) =>
+          prev.filter((transaction) => transaction._id !== transactionId)
+        );
+      }
+    } catch (error) {
+      toast.error("An error occurred while deleting the transaction");
+    }
+  };
+
   return (
     <div className="container mx-auto py-8 min-h-screen shadow-lg p-6 ">
       <Header />
@@ -156,6 +173,12 @@ export default function ContactDetails() {
                 </span>
               </p>
             </div>
+            <button
+              onClick={() => handleDeleteTransaction(transaction._id)}
+              className="text-red-600 hover:text-red-800 text-xl"
+            >
+              <FaTrash />
+            </button>
           </li>
         ))}
       </ul>

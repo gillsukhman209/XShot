@@ -29,6 +29,9 @@ function Transactions({ transaction }) {
             ${transaction.amount}
           </span>
         </p>
+        {transaction.note && (
+          <p className="text-sm text-black">{transaction.note}</p>
+        )}
       </div>
       <button
         onClick={() =>
