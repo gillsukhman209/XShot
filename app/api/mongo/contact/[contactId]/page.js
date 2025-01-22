@@ -6,7 +6,7 @@ import Header from "../../../../dashboard/components/Header";
 import { FaTrash } from "react-icons/fa";
 import { toast } from "react-hot-toast";
 import Modal from "../../../../../components/Modal";
-
+import Transactions from "../../../../dashboard/components/Transactions";
 export default function ContactDetails() {
   const pathname = usePathname();
   const contactId = pathname.split("/").pop(); // Extract `contactId` from the URL
@@ -14,6 +14,12 @@ export default function ContactDetails() {
   const [transactions, setTransactions] = useState([]);
   const [summary, setSummary] = useState({ lent: 0, borrowed: 0 });
   const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
+  const [showTransactionPopup, setShowTransactionPopup] = useState(false);
+
+  const [user, setUser] = useState(null);
+  const [transactionType, setTransactionType] = useState("borrowed");
+  const [transactionAmount, setTransactionAmount] = useState(0);
+  const [transactionNote, setTransactionNote] = useState("");
 
   useEffect(() => {
     const fetchContactDetails = async () => {
@@ -101,6 +107,33 @@ export default function ContactDetails() {
     }
   };
 
+  const handleTransactionSubmit = async () => {
+    if (!transactionAmount) {
+      toast.error("Please fill all fields");
+      return;
+    }
+
+    try {
+      const res = await axios.post("/api/mongo/transaction", {
+        contactUniqueCode: contact.uniqueCode,
+        amount: transactionAmount,
+        type: transactionType,
+        note: transactionNote,
+      });
+
+      if (res.status === 200) {
+        toast.success("Transaction added successfully");
+      } else {
+        throw new Error(res.data.error || "Failed to add transaction");
+      }
+
+      setShowTransactionPopup(false);
+      setTransactionAmount("");
+    } catch (error) {
+      toast.error(error.message || "An unexpected error occurred");
+    }
+  };
+
   return (
     <div className="container mx-auto py-8 min-h-screen shadow-lg p-6 ">
       <Header />
@@ -142,6 +175,19 @@ export default function ContactDetails() {
           </p>
         </div>
       </section>
+
+      {/* Transactions Section */}
+      <div className="grid grid-cols-1 gap-4 rounded-2xl p-6 shadow-2xl bg-white">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-semibold text-gray-800">Transactions</h2>
+          <button
+            onClick={() => setShowTransactionPopup(true)}
+            className="flex items-center gap-2 rounded-full bg-gray-800 px-4 py-2 text-lg font-medium text-white shadow hover:bg-indigo-700"
+          >
+            +
+          </button>
+        </div>
+      </div>
 
       <ul className="mt-4 space-y-4 shadow-lg rounded-lg p-6">
         {transactions.map((transaction) => (
@@ -204,6 +250,79 @@ export default function ContactDetails() {
           </button>
         </div>
       </Modal>
+
+      {/* Popup for adding transaction */}
+      {showTransactionPopup && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-10 rounded-lg shadow-lg w-96">
+            <h2 className="text-2xl font-semibold">Add Transaction</h2>
+
+            <div className="mt-6">
+              <label
+                className="block text-lg font-medium text-gray-700"
+                htmlFor="transactionType"
+              >
+                Type
+              </label>
+              <select
+                id="transactionType"
+                value={transactionType}
+                onChange={(e) => setTransactionType(e.target.value)}
+                className="border p-3 rounded w-full mt-1"
+              >
+                <option value="borrowed">Borrowed</option>
+                <option value="lent">Lent</option>
+              </select>
+            </div>
+            <div className="mt-6">
+              <label
+                className="block text-lg font-medium text-gray-700"
+                htmlFor="amount"
+              >
+                Amount
+              </label>
+              <input
+                id="amount"
+                type="number"
+                value={transactionAmount}
+                onChange={(e) => setTransactionAmount(e.target.value)}
+                placeholder="Enter amount"
+                className="border p-3 rounded w-full mt-1"
+              />
+            </div>
+            <div className="mt-6">
+              <label
+                className="block text-lg font-medium text-gray-700"
+                htmlFor="note"
+              >
+                Note
+              </label>
+              <input
+                id="note"
+                type="text"
+                value={transactionNote}
+                onChange={(e) => setTransactionNote(e.target.value)}
+                placeholder="Add a note (optional)"
+                className="border p-3 rounded w-full mt-1"
+              />
+            </div>
+            <div className="flex justify-end mt-6">
+              <button
+                onClick={handleTransactionSubmit}
+                className="bg-blue-500 text-white px-6 py-3 rounded"
+              >
+                Submit
+              </button>
+              <button
+                onClick={() => setShowTransactionPopup(false)}
+                className="ml-2 bg-gray-300 px-6 py-3 rounded"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
