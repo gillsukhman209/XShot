@@ -107,16 +107,18 @@ export async function POST(req) {
     },
   });
 }
+
 export async function DELETE(req) {
   const session = await getServerSession(authOptions);
 
   if (!session || !session.user) {
+    console.log("User not authenticated");
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
 
   const { transactionId } = await req.json();
-
   if (!transactionId) {
+    console.log("Transaction ID is required");
     return NextResponse.json(
       { error: "Transaction ID is required" },
       { status: 400 }
@@ -125,72 +127,114 @@ export async function DELETE(req) {
 
   await connectMongo();
 
+  // Find the current user
   const currentUser = await User.findById(session.user.id);
 
   if (!currentUser) {
+    console.log("User not found");
     return NextResponse.json({ error: "User not found" }, { status: 404 });
   }
 
-  // Find the transaction to delete
+  // Find the transaction in the current user's transaction list
   const transactionIndex = currentUser.transactions.findIndex(
     (transaction) => transaction._id.toString() === transactionId
   );
 
   if (transactionIndex === -1) {
+    console.log("Transaction not found");
     return NextResponse.json(
       { error: "Transaction not found" },
       { status: 404 }
     );
   }
 
+  // Extract the transaction details
   const transaction = currentUser.transactions[transactionIndex];
+  const contactUniqueCode = transaction.contact.uniqueCode;
 
-  // Update totals based on the transaction type
-  if (transaction.status === "borrowed") {
-    currentUser.totalBorrowed -= Number(transaction.amount);
+  // Update currentUser's totals
+  if (transaction.status === "lent") {
+    currentUser.totalLent = Math.max(
+      0,
+      currentUser.totalLent - transaction.amount
+    );
     const contact = currentUser.contacts.find(
-      (contact) => contact.uniqueCode === transaction.contact.uniqueCode
+      (contact) => contact.uniqueCode === contactUniqueCode
     );
-    contact.totalLent -= Number(transaction.amount);
-
-    // Remove the transaction from the contact's transactions
-    const contactUser = await User.findOne({
-      uniqueCode: transaction.contact.uniqueCode,
-    });
-    const contactTransactionIndex = contactUser.transactions.findIndex(
-      (t) => t._id.toString() === transactionId
-    );
-    if (contactTransactionIndex !== -1) {
-      contactUser.transactions.splice(contactTransactionIndex, 1);
-      await contactUser.save();
+    if (contact) {
+      contact.totalBorrowed = Math.max(
+        0,
+        contact.totalBorrowed - transaction.amount
+      );
     }
-  } else {
-    currentUser.totalLent -= Number(transaction.amount);
-    const contact = currentUser.contacts.find(
-      (contact) => contact.uniqueCode === transaction.contact.uniqueCode
+  } else if (transaction.status === "borrowed") {
+    currentUser.totalBorrowed = Math.max(
+      0,
+      currentUser.totalBorrowed - transaction.amount
     );
-    contact.totalBorrowed -= Number(transaction.amount);
+    const contact = currentUser.contacts.find(
+      (contact) => contact.uniqueCode === contactUniqueCode
+    );
+    if (contact) {
+      contact.totalLent = Math.max(0, contact.totalLent - transaction.amount);
+    }
+  }
 
-    // Remove the transaction from the contact's transactions
-    const contactUser = await User.findOne({
-      uniqueCode: transaction.contact.uniqueCode,
-    });
+  // Remove the transaction from currentUser
+  currentUser.transactions.splice(transactionIndex, 1);
+  await currentUser.save();
+
+  // Update the contact user's transactions and totals
+  const contactUser = await User.findOne({ uniqueCode: contactUniqueCode });
+
+  if (contactUser) {
     const contactTransactionIndex = contactUser.transactions.findIndex(
       (t) => t._id.toString() === transactionId
     );
+
     if (contactTransactionIndex !== -1) {
+      const contactTransaction =
+        contactUser.transactions[contactTransactionIndex];
+
+      if (contactTransaction.status === "borrowed") {
+        contactUser.totalBorrowed = Math.max(
+          0,
+          contactUser.totalBorrowed - contactTransaction.amount
+        );
+      } else if (contactTransaction.status === "lent") {
+        contactUser.totalLent = Math.max(
+          0,
+          contactUser.totalLent - contactTransaction.amount
+        );
+      }
+
+      // Remove the transaction from contactUser
       contactUser.transactions.splice(contactTransactionIndex, 1);
+
+      // Update the corresponding contact in contactUser's contacts array
+      const userContact = contactUser.contacts.find(
+        (contact) => contact.uniqueCode === currentUser.uniqueCode
+      );
+      if (userContact) {
+        if (contactTransaction.status === "lent") {
+          userContact.totalBorrowed = Math.max(
+            0,
+            userContact.totalBorrowed - contactTransaction.amount
+          );
+        } else if (contactTransaction.status === "borrowed") {
+          userContact.totalLent = Math.max(
+            0,
+            userContact.totalLent - contactTransaction.amount
+          );
+        }
+      }
+
       await contactUser.save();
     }
   }
 
-  // Remove the transaction
-  currentUser.transactions.splice(transactionIndex, 1);
-
-  await currentUser.save();
-
   return NextResponse.json({
     success: true,
-    message: "Transaction deleted successfully",
+    message: "Transaction and associated balances updated successfully",
   });
 }

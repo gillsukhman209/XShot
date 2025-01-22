@@ -84,6 +84,7 @@ export default function ContactDetails() {
   };
 
   const handleDeleteTransaction = async (transactionId) => {
+    console.log("Sending Transaction ID:", transactionId);
     try {
       const res = await axios.delete(`/api/mongo/transaction`, {
         data: { transactionId },
