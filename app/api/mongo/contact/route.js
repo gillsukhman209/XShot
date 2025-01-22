@@ -142,6 +142,15 @@ export async function DELETE(req) {
     return NextResponse.json({ error: "User not found" }, { status: 404 });
   }
 
+  // Find the contact user
+  const contactUser = await User.findOne({ uniqueCode });
+  if (!contactUser) {
+    return NextResponse.json(
+      { error: "Contact with the provided unique code does not exist" },
+      { status: 404 }
+    );
+  }
+
   // Remove the contact from the current user's contacts list
   const contactIndex = currentUser.contacts.findIndex(
     (contact) => contact.uniqueCode === uniqueCode
@@ -155,23 +164,83 @@ export async function DELETE(req) {
   }
 
   currentUser.contacts.splice(contactIndex, 1);
+
+  // Filter transactions related to this contact and calculate totals to remove
+  let totalLentToRemove = 0;
+  let totalBorrowedToRemove = 0;
+
+  const relatedTransactions = currentUser.transactions.filter(
+    (transaction) => transaction.contact.uniqueCode === uniqueCode
+  );
+
+  relatedTransactions.forEach((transaction) => {
+    if (transaction.status === "lent") {
+      totalLentToRemove += transaction.amount;
+    } else if (transaction.status === "borrowed") {
+      totalBorrowedToRemove += transaction.amount;
+    }
+  });
+
+  // Update currentUser's totals
+  currentUser.totalLent = Math.max(
+    0,
+    currentUser.totalLent - totalLentToRemove
+  );
+  currentUser.totalBorrowed = Math.max(
+    0,
+    currentUser.totalBorrowed - totalBorrowedToRemove
+  );
+
+  // Remove related transactions from the current user's transaction list
+  currentUser.transactions = currentUser.transactions.filter(
+    (transaction) => transaction.contact.uniqueCode !== uniqueCode
+  );
+
   await currentUser.save();
 
-  // Also remove the current user from the contact's contacts list
-  const contactUser = await User.findOne({ uniqueCode });
-  if (contactUser) {
-    const userIndex = contactUser.contacts.findIndex(
-      (contact) => contact.uniqueCode === currentUser.uniqueCode
+  // Also update the contact user's transactions and totals
+  const userIndex = contactUser.contacts.findIndex(
+    (contact) => contact.uniqueCode === currentUser.uniqueCode
+  );
+
+  if (userIndex !== -1) {
+    contactUser.contacts.splice(userIndex, 1);
+
+    let totalLentToContact = 0;
+    let totalBorrowedFromContact = 0;
+
+    const reverseRelatedTransactions = contactUser.transactions.filter(
+      (transaction) => transaction.contact.uniqueCode === currentUser.uniqueCode
     );
 
-    if (userIndex !== -1) {
-      contactUser.contacts.splice(userIndex, 1);
-      await contactUser.save();
-    }
+    reverseRelatedTransactions.forEach((transaction) => {
+      if (transaction.status === "borrowed") {
+        totalBorrowedFromContact += transaction.amount;
+      } else if (transaction.status === "lent") {
+        totalLentToContact += transaction.amount;
+      }
+    });
+
+    // Update contactUser's totals
+    contactUser.totalLent = Math.max(
+      0,
+      contactUser.totalLent - totalLentToContact
+    );
+    contactUser.totalBorrowed = Math.max(
+      0,
+      contactUser.totalBorrowed - totalBorrowedFromContact
+    );
+
+    // Remove related transactions from the contact's transaction list
+    contactUser.transactions = contactUser.transactions.filter(
+      (transaction) => transaction.contact.uniqueCode !== currentUser.uniqueCode
+    );
+
+    await contactUser.save();
   }
 
   return NextResponse.json({
     success: true,
-    message: "Contact deleted successfully",
+    message: "Contact and associated transactions deleted successfully",
   });
 }

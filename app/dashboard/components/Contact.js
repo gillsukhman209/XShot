@@ -18,28 +18,9 @@ function Contact({ contact }) {
 
   const buttonText = balance > 0 ? "Pay" : "Remind";
 
-  const handleDeleteContact = async () => {
-    try {
-      const res = await axios.delete(
-        `/api/mongo/contact?uniqueCode=${contact.uniqueCode}`
-      );
-      if (res.status === 200) {
-        toast.success("Contact deleted successfully");
-        // Optionally, you can add a callback to refresh the contact list or update the state
-      } else {
-        toast.error(res.data.error);
-      }
-    } catch (error) {
-      toast.error("An error occurred while deleting the contact");
-    }
-  };
-
   return (
     <div className="flex h-[100px] w-full items-center justify-between rounded-lg bg-gray-50 p-4 shadow-xl">
       <div className="flex items-center gap-3">
-        <button onClick={handleDeleteContact}>
-          <FaTrash />
-        </button>
         <div>
           <h3 className="font-bold text-gray-800">{contact.name}</h3>
           {balance !== 0 && (

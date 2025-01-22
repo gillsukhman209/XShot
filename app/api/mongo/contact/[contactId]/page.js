@@ -3,7 +3,8 @@ import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import Header from "../../../../dashboard/components/Header";
-
+import { FaTrash } from "react-icons/fa";
+import { toast } from "react-hot-toast";
 export default function ContactDetails() {
   const pathname = usePathname();
   const contactId = pathname.split("/").pop(); // Extract `contactId` from the URL
@@ -59,11 +60,35 @@ export default function ContactDetails() {
 
   const netBalance = summary.lent - summary.borrowed;
 
+  const handleDeleteContact = async () => {
+    try {
+      const res = await axios.delete(
+        `/api/mongo/contact?uniqueCode=${contact.uniqueCode}`
+      );
+      if (res.status === 200) {
+        toast.success("Contact deleted successfully");
+        // Optionally, you can add a callback to refresh the contact list or update the state
+      }
+    } catch (error) {
+      toast.error("An error occurred while deleting the contact");
+    }
+  };
+
   return (
-    <div className="container mx-auto py-8 min-h-screen shadow-lg p-6">
+    <div className="container mx-auto py-8 min-h-screen shadow-lg p-6 ">
       <Header />
+
+      <div className="flex items-center justify-center ">
+        <h2 className="mt-6 text-2xl font-bold  flex items-center justify-center  flex-1">
+          {contact.name}
+        </h2>
+        <button onClick={handleDeleteContact} className=" h-full mt-6">
+          <FaTrash className="text-red-600" />
+        </button>
+      </div>
+
       {/* Summary Section */}
-      <section className="grid grid-cols-3 gap-4 rounded-lg bg-white p-6 text-center shadow">
+      <section className="grid grid-cols-3 mt-4 gap-4 rounded-lg bg-white p-6 text-center shadow">
         <div>
           <h2 className="text-xl font-semibold text-gray-800">Lent</h2>
           <p className="text-3xl font-bold text-green-600">
@@ -88,10 +113,7 @@ export default function ContactDetails() {
         </div>
       </section>
 
-      <h2 className="mt-6 text-xl font-semibold">
-        Transactions for {contact.name}
-      </h2>
-      <ul className="mt-4 space-y-4 ">
+      <ul className="mt-4 space-y-4 shadow-lg rounded-lg p-6">
         {transactions.map((transaction) => (
           <li
             key={transaction._id}
@@ -104,7 +126,7 @@ export default function ContactDetails() {
                   : "You borrowed from"}{" "}
                 {transaction.contact.name}
               </h3>
-              <p className="text-sm text-black">
+              <p className="text-md text-black">
                 {new Date(transaction.date).toLocaleString("en-US", {
                   year: "numeric",
                   month: "long",
