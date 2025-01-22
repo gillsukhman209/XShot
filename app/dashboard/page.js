@@ -170,22 +170,34 @@ export default function Dashboard() {
                   className="block text-lg font-medium text-gray-700"
                   htmlFor="uniqueCode"
                 >
-                  Unique Code
+                  Code
                 </label>
                 <input
                   id="uniqueCode"
                   type="text"
                   value={uniqueCode}
                   onChange={(e) => setUniqueCode(e.target.value)}
-                  placeholder="Enter unique code"
-                  className="border p-3 rounded w-full mt-1"
+                  placeholder="Enter  code"
+                  className="border p-3 rounded w-full mt-2"
                 />
-                <button
-                  onClick={handleSearchContact}
-                  className="mt-4 bg-blue-500 text-white px-4 py-2 rounded shadow hover:bg-blue-600"
-                >
-                  Search
-                </button>
+                <div className="flex flex justify-around items-center mt-4">
+                  <button
+                    onClick={handleSearchContact}
+                    className="bg-blue-500 text-white px-6 py-2 rounded shadow hover:bg-blue-600"
+                  >
+                    Search
+                  </button>
+                  <button
+                    onClick={() => {
+                      setShowPopup(false);
+                      setUniqueCode("");
+                      setFoundContact(null);
+                    }}
+                    className="bg-gray-300 px-6 py-2 rounded "
+                  >
+                    Cancel
+                  </button>
+                </div>
               </div>
 
               {foundContact && (
@@ -194,7 +206,7 @@ export default function Dashboard() {
                     {foundContact.name}
                   </h3>
                   <p className="text-sm text-gray-600">
-                    Unique Code: {foundContact.uniqueCode}
+                    Code: {foundContact.uniqueCode}
                   </p>
                   <button
                     onClick={handleAddContact}
@@ -204,19 +216,6 @@ export default function Dashboard() {
                   </button>
                 </div>
               )}
-
-              <div className="flex justify-end mt-6">
-                <button
-                  onClick={() => {
-                    setShowPopup(false);
-                    setUniqueCode("");
-                    setFoundContact(null);
-                  }}
-                  className="bg-gray-300 px-6 py-3 rounded"
-                >
-                  Cancel
-                </button>
-              </div>
             </div>
           </div>
         )}

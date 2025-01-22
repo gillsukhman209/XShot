@@ -150,8 +150,7 @@ export default function ContactDetails() {
         </button>
       </div>
 
-      {/* Summary Section */}
-      <section className="grid grid-cols-3 mt-4 gap-4 rounded-lg bg-white p-6 text-center shadow">
+      <section className="grid grid-cols-3 mt-4 gap-4 rounded-lg bg-white p-6 text-center ">
         <div>
           <h2 className="text-xl font-semibold text-gray-800">Lent</h2>
           <p className="text-3xl font-bold text-green-600">
@@ -177,23 +176,23 @@ export default function ContactDetails() {
       </section>
 
       {/* Transactions Section */}
-      <div className="grid grid-cols-1 gap-4 rounded-2xl p-6 shadow-2xl bg-white">
+      <div className="grid grid-cols-1 gap-4 rounded-2xl p-6  mt-10 bg-white">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-semibold text-gray-800">Transactions</h2>
           <button
             onClick={() => setShowTransactionPopup(true)}
-            className="flex items-center gap-2 rounded-full bg-gray-800 px-4 py-2 text-lg font-medium text-white shadow hover:bg-indigo-700"
+            className="flex items-center gap-2 rounded-full bg-gray-800 px-4 py-2 text-lg font-medium text-white  hover:bg-indigo-700"
           >
             +
           </button>
         </div>
       </div>
 
-      <ul className="mt-4 space-y-4 shadow-lg rounded-lg p-6">
+      <ul className="mt-4 space-y-4 rounded-lg p-6">
         {transactions.map((transaction) => (
           <li
             key={transaction._id}
-            className="flex h-[120px] w-full items-center justify-between rounded-lg p-4 shadow-lg" // Increased height from 100px to 120px
+            className="flex h-[120px] w-full items-center justify-between rounded-lg p-4 shadow-xl" // Increased height from 100px to 120px
           >
             <div>
               <h3 className="text-lg font-bold text-black">
