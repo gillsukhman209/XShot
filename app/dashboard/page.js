@@ -19,11 +19,20 @@ export default function Dashboard() {
   const [transactionType, setTransactionType] = useState("borrowed");
   const [transactionAmount, setTransactionAmount] = useState("");
   const [transactionNote, setTransactionNote] = useState("");
+  const [loading, setLoading] = useState(true); // New loading state
 
   useEffect(() => {
-    axios.get("/api/auth/user/getCurrentUser").then((res) => {
-      setUser(res.data.user);
-    });
+    const fetchUser = async () => {
+      try {
+        const res = await axios.get("/api/auth/user/getCurrentUser");
+        setUser(res.data.user);
+      } catch (error) {
+        toast.error("Failed to load user data");
+      } finally {
+        setLoading(false); // Set loading to false after fetching
+      }
+    };
+    fetchUser();
   }, []);
 
   const handleSearchContact = async () => {
@@ -103,6 +112,14 @@ export default function Dashboard() {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <span className="loading loading-spinner loading-lg"></span>
+      </div>
+    );
+  }
+
   return (
     <main className="container mx-auto space-y-8 px-4 py-8 min-h-screen">
       <Header />
@@ -180,7 +197,7 @@ export default function Dashboard() {
                   placeholder="Enter  code"
                   className="border p-3 rounded w-full mt-2"
                 />
-                <div className="flex flex justify-around items-center mt-4">
+                <div className="flex  justify-around items-center mt-4">
                   <button
                     onClick={handleSearchContact}
                     className="bg-blue-500 text-white px-6 py-2 rounded shadow hover:bg-blue-600"

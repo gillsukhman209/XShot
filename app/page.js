@@ -10,31 +10,44 @@ import FAQ from "@/components/FAQ";
 import { renderSchemaTags } from "@/libs/seo";
 import Footer from "@/components/Footer";
 import Testimonials3 from "@/components/Testimonials3";
+
 export default function Home() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const [isChecking, setIsChecking] = useState(true);
 
   useEffect(() => {
-    const checkSession = async () => {
-      if (status === "loading") return; // Wait for session status to load
-
-      const res = await fetch("/api/auth/user/getCurrentUser");
-      const user = await res.json();
+    const checkUserAccess = async () => {
+      if (status === "loading") return; // Wait until the session is ready
 
       try {
-        if (user) {
-          if (user.user.hasAccess) {
-            router.push("/dashboard");
-          }
+        const res = await fetch("/api/auth/user/getCurrentUser");
+        const user = await res.json();
+
+        if (user?.user?.hasAccess) {
+          router.push("/dashboard");
+        } else {
+          setIsChecking(false); // User doesn't have access, show the landing page
         }
       } catch (error) {
         console.error("Error checking user access:", error);
+        setIsChecking(false); // In case of an error, show the landing page
       }
     };
-    checkSession();
-  }, [session, status, router]);
 
-  // Render landing page if not logged in
+    checkUserAccess();
+  }, [status, router]);
+
+  // Show a loading spinner until the access check is done
+  if (isChecking) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <span className="loading loading-spinner loading-lg"></span>
+      </div>
+    );
+  }
+
+  // Render the landing page if the user doesn't have access
   return (
     <>
       {renderSchemaTags()}
@@ -46,7 +59,6 @@ export default function Home() {
         <Problem />
         <Pricing />
         <Testimonials3 />
-
         <FAQ />
       </main>
       <Footer />

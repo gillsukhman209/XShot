@@ -6,7 +6,7 @@ import Header from "../../../../dashboard/components/Header";
 import { FaTrash } from "react-icons/fa";
 import { toast } from "react-hot-toast";
 import Modal from "../../../../../components/Modal";
-import Transactions from "../../../../dashboard/components/Transactions";
+
 export default function ContactDetails() {
   const pathname = usePathname();
   const contactId = pathname.split("/").pop(); // Extract `contactId` from the URL
@@ -16,7 +16,6 @@ export default function ContactDetails() {
   const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
   const [showTransactionPopup, setShowTransactionPopup] = useState(false);
 
-  const [user, setUser] = useState(null);
   const [transactionType, setTransactionType] = useState("borrowed");
   const [transactionAmount, setTransactionAmount] = useState(0);
   const [transactionNote, setTransactionNote] = useState("");
@@ -28,8 +27,6 @@ export default function ContactDetails() {
         .then((res) => {
           return res.data.user;
         });
-
-      const currentUserUniqueCode = currentUser.uniqueCode;
 
       try {
         const res = await axios.get(
@@ -64,7 +61,11 @@ export default function ContactDetails() {
   }, [contactId]);
 
   if (!contact) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <span className="loading loading-spinner loading-lg"></span>
+      </div>
+    );
   }
 
   const netBalance = summary.lent - summary.borrowed;
@@ -137,14 +138,13 @@ export default function ContactDetails() {
   return (
     <div className="container mx-auto py-8 min-h-screen shadow-lg p-6 ">
       <Header />
-
-      <div className="flex items-center justify-center ">
-        <h2 className="mt-6 text-2xl font-bold  flex items-center justify-center  flex-1">
+      <div className="flex items-center justify-between  rounded-lg pl-24">
+        <h2 className="mt-6 text-2xl font-bold text-center w-full">
           {contact.name}
         </h2>
         <button
           onClick={confirmDeleteContact}
-          className="w-full max-w-[80px] rounded bg-indigo-600 px-4 py-2 text-sm text-white hover:bg-indigo-70 mt-6"
+          className="rounded bg-indigo-600 px-4 py-2 text-sm text-white hover:bg-indigo-70 mt-6"
         >
           Delete
         </button>
