@@ -262,7 +262,7 @@ export default function Dashboard() {
                   <option value="">Select a contact</option>
                   {user?.contacts.map((contact) => (
                     <option key={contact.id} value={contact.uniqueCode}>
-                      {contact.name} ({contact.uniqueCode})
+                      {contact.name}
                     </option>
                   ))}
                 </select>

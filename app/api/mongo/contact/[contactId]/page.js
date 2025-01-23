@@ -14,11 +14,16 @@ export default function ContactDetails() {
   const [transactions, setTransactions] = useState([]);
   const [summary, setSummary] = useState({ lent: 0, borrowed: 0 });
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDeleteTransactionModalOpen, setIsDeleteTransactionModalOpen] =
+    useState(false);
   const [showTransactionPopup, setShowTransactionPopup] = useState(false);
   const [transactionType, setTransactionType] = useState("borrowed");
   const [transactionAmount, setTransactionAmount] = useState(0);
   const [transactionNote, setTransactionNote] = useState("");
+  const [transactionToDelete, setTransactionToDelete] = useState(null);
+
   console.log("contactId", contactId);
+
   useEffect(() => {
     const fetchContactDetails = async () => {
       const currentUser = await axios
@@ -84,20 +89,26 @@ export default function ContactDetails() {
     setIsModalOpen(true);
   };
 
-  const handleDeleteTransaction = async (transactionId) => {
+  const handleDeleteTransaction = async () => {
     try {
       const res = await axios.delete(`/api/mongo/transaction`, {
-        data: { transactionId },
+        data: { transactionId: transactionToDelete },
       });
       if (res.status === 200) {
         toast.success("Transaction deleted successfully");
         setTransactions((prev) =>
-          prev.filter((transaction) => transaction._id !== transactionId)
+          prev.filter((transaction) => transaction._id !== transactionToDelete)
         );
+        setIsDeleteTransactionModalOpen(false);
       }
     } catch (error) {
       toast.error("An error occurred while deleting the transaction");
     }
+  };
+
+  const confirmDeleteTransaction = (transactionId) => {
+    setTransactionToDelete(transactionId);
+    setIsDeleteTransactionModalOpen(true);
   };
 
   const handleTransactionSubmit = async () => {
@@ -211,7 +222,7 @@ export default function ContactDetails() {
               </p>
             </div>
             <button
-              onClick={() => handleDeleteTransaction(transaction._id)}
+              onClick={() => confirmDeleteTransaction(transaction._id)}
               className="px-4 py-2 bg-indigo-600 text-white rounded-md mt-4 md:mt-0"
             >
               Delete Transaction
@@ -235,6 +246,30 @@ export default function ContactDetails() {
           <button
             className="px-4 py-2 bg-red-500 text-white rounded-md"
             onClick={handleDeleteContact}
+          >
+            Confirm
+          </button>
+        </div>
+      </Modal>
+
+      <Modal
+        isModalOpen={isDeleteTransactionModalOpen}
+        onClose={() => setIsDeleteTransactionModalOpen(false)}
+      >
+        <p>
+          This action is irreversible. Are you sure you want to delete this
+          transaction?
+        </p>
+        <div className="flex justify-end space-x-4 mt-4">
+          <button
+            className="px-4 py-2 bg-gray-300 rounded-md"
+            onClick={() => setIsDeleteTransactionModalOpen(false)}
+          >
+            Cancel
+          </button>
+          <button
+            className="px-4 py-2 bg-red-500 text-white rounded-md"
+            onClick={handleDeleteTransaction}
           >
             Confirm
           </button>
