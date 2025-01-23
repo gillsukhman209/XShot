@@ -3,6 +3,7 @@ import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import Header from "../../../../dashboard/components/Header";
+import { CgTrash } from "react-icons/cg";
 
 import { toast } from "react-hot-toast";
 import Modal from "../../../../../components/Modal";
@@ -141,17 +142,6 @@ export default function ContactDetails() {
   return (
     <div className="container mx-auto py-8 px-4 min-h-screen">
       <Header />
-      <div className="flex flex-col md:flex-row items-center justify-between rounded-lg">
-        <h2 className="mt-6 text-2xl font-bold text-center w-full md:w-auto">
-          {contact.name}
-        </h2>
-        <button
-          onClick={confirmDeleteContact}
-          className="rounded bg-indigo-600 px-4 py-2 text-sm text-white hover:bg-indigo-700 mt-6"
-        >
-          Delete
-        </button>
-      </div>
 
       <section className="grid grid-cols-1 md:grid-cols-3 mt-4 gap-4 rounded-lg bg-white p-6 text-center">
         <div>
@@ -178,15 +168,29 @@ export default function ContactDetails() {
         </div>
       </section>
 
+      <div className="rounded-lg">
+        <h2 className="mt-6 text-2xl font-bold text-center w-full md:w-auto ml-4">
+          {contact.name}
+        </h2>
+      </div>
+
       <div className="grid grid-cols-1 gap-4 rounded-2xl p-6 mt-10 bg-white">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-semibold text-gray-800">Transactions</h2>
-          <button
-            onClick={() => setShowTransactionPopup(true)}
-            className="flex items-center gap-2 rounded-full bg-gray-800 px-4 py-2 text-lg font-medium text-white hover:bg-indigo-700"
-          >
-            +
-          </button>
+          <div className="flex items-center justify-center gap-4">
+            <button
+              onClick={() => setShowTransactionPopup(true)}
+              className="flex h-10 w-10 items-center justify-center rounded-full text-xl bg-white border-[1px] border-gray-300 shadow-2xl "
+            >
+              +
+            </button>
+            <button
+              onClick={confirmDeleteContact}
+              className="rounded  px-4 py-2 text-4xl text-red-600 "
+            >
+              <CgTrash />
+            </button>
+          </div>
         </div>
       </div>
 
@@ -220,6 +224,7 @@ export default function ContactDetails() {
                   ${transaction.amount}
                 </span>
               </p>
+              <p className="text-sm text-gray-600">{transaction.note}</p>
             </div>
             <button
               onClick={() => confirmDeleteTransaction(transaction._id)}

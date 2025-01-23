@@ -1,7 +1,5 @@
 import React from "react";
-import axios from "axios";
-import { toast } from "react-hot-toast";
-import { FaTrash } from "react-icons/fa";
+
 import { useRouter } from "next/navigation";
 function Contact({ contact }) {
   let balance = contact.totalLent - contact.totalBorrowed;
@@ -17,7 +15,7 @@ function Contact({ contact }) {
     balance > 0 ? `You owe $${textBalance}` : `Owes you $${textBalance}`;
 
   return (
-    <div className="flex h-[100px] w-full items-center justify-between rounded-lg bg-gray-50 p-4 shadow-xl">
+    <div className="flex h-[100px] w-full items-center justify-between rounded-lg bg-white p-4 shadow-xl">
       <div className="flex items-center gap-3">
         <div>
           <h3 className="font-bold text-gray-800">{contact.name}</h3>
@@ -36,7 +34,7 @@ function Contact({ contact }) {
         onClick={() => router.push(`/api/mongo/contact/${contact.uniqueCode}`)}
         className="w-full max-w-[140px] rounded bg-indigo-600 px-4 py-2 text-sm text-white"
       >
-        Contact Details
+        View Contact
       </button>
     </div>
   );

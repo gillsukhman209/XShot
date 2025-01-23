@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import Contact from "./components/Contact";
 import Transactions from "./components/Transactions";
 import { toast } from "react-hot-toast";
+import { PiArrowFatLinesDown, PiArrowFatLinesUp } from "react-icons/pi";
 
 export const dynamic = "force-dynamic";
 
@@ -20,6 +21,7 @@ export default function Dashboard() {
   const [transactionAmount, setTransactionAmount] = useState("");
   const [transactionNote, setTransactionNote] = useState("");
   const [loading, setLoading] = useState(true);
+  const [visibleTransactions, setVisibleTransactions] = useState(5); // State to track visible transactions
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -98,6 +100,14 @@ export default function Dashboard() {
     }
   };
 
+  const handleShowMore = () => {
+    setVisibleTransactions(user?.transactions.length || 0); // Show all transactions
+  };
+
+  const handleShowLess = () => {
+    setVisibleTransactions(5);
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -140,12 +150,10 @@ export default function Dashboard() {
         <section>
           <div className="grid grid-cols-1 gap-4 rounded-2xl p-6 shadow-2xl bg-white">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold text-gray-800">
-                Contacts {user?.uniqueCode}
-              </h2>
+              <h2 className="text-xl font-semibold text-gray-800">Contacts</h2>
               <button
                 onClick={() => setShowPopup(true)}
-                className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-800 text-xl text-white shadow hover:bg-indigo-700"
+                className="flex h-10 w-10 items-center justify-center rounded-full text-xl bg-white border-[1px] border-gray-300 shadow-2xl "
               >
                 +
               </button>
@@ -232,14 +240,33 @@ export default function Dashboard() {
             </h2>
             <button
               onClick={() => setShowTransactionPopup(true)}
-              className="flex items-center gap-2 rounded-full bg-gray-800 px-4 py-2 text-lg font-medium text-white shadow hover:bg-indigo-700"
+              className="flex h-10 w-10 items-center justify-center rounded-full text-xl bg-white border-[1px] border-gray-300 shadow-2xl "
             >
               +
             </button>
           </div>
-          {user?.transactions.map((transaction) => (
-            <Transactions key={transaction.id} transaction={transaction} />
-          ))}
+          {user?.transactions
+            .slice(0, visibleTransactions)
+            .map((transaction) => (
+              <Transactions key={transaction.id} transaction={transaction} />
+            ))}
+          {user?.transactions.length > 5 &&
+            visibleTransactions < user?.transactions.length && (
+              <button
+                onClick={handleShowMore}
+                className="mt-4 px-4 py-2 rounded-full mx-auto text-2xl border-[1px] border-gray-300 shadow-2xl "
+              >
+                <PiArrowFatLinesDown />
+              </button>
+            )}
+          {visibleTransactions > 5 && (
+            <button
+              onClick={handleShowLess}
+              className="mt-4 px-4 py-2 rounded-full mx-auto text-2xl border-[1px] border-gray-300 shadow-2xl "
+            >
+              <PiArrowFatLinesUp />
+            </button>
+          )}
         </div>
 
         {showTransactionPopup && (
