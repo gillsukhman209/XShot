@@ -16,8 +16,6 @@ function Contact({ contact }) {
   const owesMessage =
     balance > 0 ? `You owe $${textBalance}` : `Owes you $${textBalance}`;
 
-  const buttonText = balance > 0 ? "Pay" : "Remind";
-
   return (
     <div className="flex h-[100px] w-full items-center justify-between rounded-lg bg-gray-50 p-4 shadow-xl">
       <div className="flex items-center gap-3">

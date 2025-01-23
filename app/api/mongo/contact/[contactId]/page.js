@@ -3,7 +3,7 @@ import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import Header from "../../../../dashboard/components/Header";
-import { FaTrash } from "react-icons/fa";
+
 import { toast } from "react-hot-toast";
 import Modal from "../../../../../components/Modal";
 
@@ -18,7 +18,7 @@ export default function ContactDetails() {
   const [transactionType, setTransactionType] = useState("borrowed");
   const [transactionAmount, setTransactionAmount] = useState(0);
   const [transactionNote, setTransactionNote] = useState("");
-
+  console.log("contactId", contactId);
   useEffect(() => {
     const fetchContactDetails = async () => {
       const currentUser = await axios
@@ -212,7 +212,7 @@ export default function ContactDetails() {
             </div>
             <button
               onClick={() => handleDeleteTransaction(transaction._id)}
-              className="px-4 py-2 bg-indigo-600 text-white rounded-md mt-4 md:mt-0 "
+              className="px-4 py-2 bg-indigo-600 text-white rounded-md mt-4 md:mt-0"
             >
               Delete Transaction
             </button>

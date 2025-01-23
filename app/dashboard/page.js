@@ -12,14 +12,14 @@ export const dynamic = "force-dynamic";
 export default function Dashboard() {
   const [user, setUser] = useState(null);
   const [uniqueCode, setUniqueCode] = useState("");
-  const [foundContact, setFoundContact] = useState(null);
+  const [name, setName] = useState("");
   const [showPopup, setShowPopup] = useState(false);
   const [showTransactionPopup, setShowTransactionPopup] = useState(false);
   const [selectedContact, setSelectedContact] = useState("");
   const [transactionType, setTransactionType] = useState("borrowed");
   const [transactionAmount, setTransactionAmount] = useState("");
   const [transactionNote, setTransactionNote] = useState("");
-  const [loading, setLoading] = useState(true); // New loading state
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -29,41 +29,27 @@ export default function Dashboard() {
       } catch (error) {
         toast.error("Failed to load user data");
       } finally {
-        setLoading(false); // Set loading to false after fetching
+        setLoading(false);
       }
     };
     fetchUser();
   }, []);
 
-  const handleSearchContact = async () => {
-    if (!uniqueCode) {
-      toast.error("Please enter a unique code");
-      return;
-    }
-
-    console.log("uniqueCode", uniqueCode);
-
-    try {
-      const res = await axios.get(
-        `/api/mongo/contact?uniqueCode=${uniqueCode}`
-      );
-      if (res.status === 200 && res.data.contact) {
-        setFoundContact(res.data.contact);
-      } else {
-        setFoundContact(null);
-        toast.error("No contact found with the provided unique code");
-      }
-    } catch (error) {
-      setFoundContact(null);
-      toast.error("An error occurred while searching for the contact");
-    }
-  };
-
   const handleAddContact = async () => {
     try {
-      console.log("foundContact", foundContact);
+      if (!name && !uniqueCode) {
+        toast.error("Please fill either the name or unique code field");
+        return;
+      }
+      console.log("name", name);
+      console.log("uniqueCode", uniqueCode);
+
+      let codeToSend =
+        uniqueCode || Math.random().toString(36).substring(2, 10);
+
       const res = await axios.post("/api/mongo/contact", {
-        uniqueCode: foundContact.uniqueCode,
+        name: name || undefined, // Send `undefined` if no name is provided
+        uniqueCode: codeToSend,
       });
 
       if (res.status === 200) {
@@ -76,7 +62,7 @@ export default function Dashboard() {
         toast.error(res.data.error);
       }
 
-      setFoundContact(null);
+      setName("");
       setUniqueCode("");
       setShowPopup(false);
     } catch (error) {
@@ -127,16 +113,13 @@ export default function Dashboard() {
         <div>
           <h2 className="text-xl font-semibold text-gray-800">Lent</h2>
           <p className="text-3xl font-bold text-green-600">
-            ${user?.totalLent?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+            ${user?.totalLent?.toLocaleString()}
           </p>
         </div>
         <div>
           <h2 className="text-xl font-semibold text-gray-800">Borrowed</h2>
           <p className="text-3xl font-bold text-red-600">
-            $
-            {user?.totalBorrowed
-              ?.toString()
-              .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+            ${user?.totalBorrowed?.toLocaleString()}
           </p>
         </div>
         <div>
@@ -148,16 +131,12 @@ export default function Dashboard() {
                 : "text-green-600"
             }`}
           >
-            $
-            {(user?.totalLent - user?.totalBorrowed)
-              ?.toString()
-              .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+            ${(user?.totalLent - user?.totalBorrowed)?.toLocaleString()}
           </p>
         </div>
       </section>
 
       <div className="flex flex-col gap-10">
-        {/* Contacts Section */}
         <section>
           <div className="grid grid-cols-1 gap-4 rounded-2xl p-6 shadow-2xl bg-white">
             <div className="flex items-center justify-between">
@@ -177,67 +156,75 @@ export default function Dashboard() {
           </div>
         </section>
 
-        {/* Popup for adding contact */}
         {showPopup && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
             <div className="bg-white p-10 rounded-lg shadow-lg w-96">
-              <h2 className="text-2xl font-semibold">Add Contact</h2>
+              <h2 className="text-2xl font-semibold text-center">
+                Add Contact
+              </h2>
               <div className="mt-6">
+                <label
+                  className="block text-lg font-medium text-gray-700"
+                  htmlFor="contactName"
+                >
+                  Name
+                </label>
+                <input
+                  id="contactName"
+                  type="text"
+                  value={name}
+                  onChange={(e) => {
+                    setName(e.target.value);
+                    if (e.target.value) setUniqueCode("");
+                  }}
+                  placeholder="Enter name"
+                  className="border p-3 rounded w-full mt-1"
+                  disabled={!!uniqueCode}
+                />
+              </div>
+              <div className="mt-4 text-center text-lg font-medium">OR</div>
+              <div className="mt-4">
                 <label
                   className="block text-lg font-medium text-gray-700"
                   htmlFor="uniqueCode"
                 >
-                  Code
+                  Unique Code
                 </label>
                 <input
                   id="uniqueCode"
                   type="text"
                   value={uniqueCode}
-                  onChange={(e) => setUniqueCode(e.target.value)}
-                  placeholder="Enter  code"
-                  className="border p-3 rounded w-full mt-2"
+                  onChange={(e) => {
+                    setUniqueCode(e.target.value);
+                    if (e.target.value) setName("");
+                  }}
+                  placeholder="Enter unique code"
+                  className="border p-3 rounded w-full mt-1"
+                  disabled={!!name}
                 />
-                <div className="flex  justify-around items-center mt-4">
-                  <button
-                    onClick={handleSearchContact}
-                    className="bg-blue-500 text-white px-6 py-2 rounded shadow hover:bg-blue-600"
-                  >
-                    Search
-                  </button>
-                  <button
-                    onClick={() => {
-                      setShowPopup(false);
-                      setUniqueCode("");
-                      setFoundContact(null);
-                    }}
-                    className="bg-gray-300 px-6 py-2 rounded "
-                  >
-                    Cancel
-                  </button>
-                </div>
               </div>
-
-              {foundContact && (
-                <div className="mt-6 bg-gray-100 p-4 rounded-lg shadow">
-                  <h3 className="text-lg font-semibold text-gray-800">
-                    {foundContact.name}
-                  </h3>
-                  <p className="text-sm text-gray-600">
-                    Code: {foundContact.uniqueCode}
-                  </p>
-                  <button
-                    onClick={handleAddContact}
-                    className="mt-4 bg-green-500 text-white px-4 py-2 rounded shadow hover:bg-green-600"
-                  >
-                    Add Contact
-                  </button>
-                </div>
-              )}
+              <div className="flex justify-between items-center mt-6">
+                <button
+                  onClick={handleAddContact}
+                  className="bg-blue-500 text-white px-6 py-2 rounded shadow hover:bg-blue-600"
+                >
+                  Add Contact
+                </button>
+                <button
+                  onClick={() => {
+                    setShowPopup(false);
+                    setName("");
+                    setUniqueCode("");
+                  }}
+                  className="bg-gray-300 px-6 py-2 rounded"
+                >
+                  Cancel
+                </button>
+              </div>
             </div>
           </div>
         )}
 
-        {/* Transactions Section */}
         <div className="grid grid-cols-1 gap-4 rounded-2xl p-6 shadow-2xl bg-white">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-semibold text-gray-800">
@@ -255,7 +242,6 @@ export default function Dashboard() {
           ))}
         </div>
 
-        {/* Popup for adding transaction */}
         {showTransactionPopup && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
             <div className="bg-white p-10 rounded-lg shadow-lg w-96">

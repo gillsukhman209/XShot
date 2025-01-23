@@ -6,7 +6,6 @@ import User from "@/models/User";
 import { NextResponse } from "next/server";
 
 export async function GET(req) {
-  // Parse the uniqueCode from the query parameters
   const { searchParams } = new URL(req.url);
   const uniqueCode = searchParams.get("uniqueCode");
 
@@ -25,7 +24,6 @@ export async function GET(req) {
     );
   }
 
-  // Find the user with the given unique code
   const contactUser = await User.findOne({ uniqueCode });
 
   if (!contactUser) {
@@ -39,73 +37,88 @@ export async function GET(req) {
     contact: contactUser,
   });
 }
-
 export async function POST(req) {
   const session = await getServerSession(authOptions);
 
   if (!session || !session.user) {
+    console.log("User not authenticated");
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
 
-  const { uniqueCode } = await req.json();
+  const { name, uniqueCode } = await req.json();
+  console.log("Received data:", { name, uniqueCode });
 
-  if (!uniqueCode) {
+  if (!name && !uniqueCode) {
+    console.log("Validation error: Either name or unique code is required");
     return NextResponse.json(
-      { error: "Unique code is required" },
+      { error: "Either name or unique code is required" },
       { status: 400 }
     );
   }
 
   await connectMongo();
 
-  // Find the current user
   const currentUser = await User.findById(session.user.id);
+
   if (!currentUser) {
+    console.log("User not found");
     return NextResponse.json({ error: "User not found" }, { status: 404 });
   }
 
-  // Find the user with the given unique code
-  const contactUser = await User.findOne({ uniqueCode });
+  let codeToUse = uniqueCode;
+
+  let contactUser = await User.findOne({ uniqueCode: codeToUse });
+  console.log("Contact user found:", contactUser);
+
   if (!contactUser) {
-    return NextResponse.json(
-      { error: "Contact with the provided unique code does not exist" },
-      { status: 404 }
-    );
+    // Create a new user if the contact doesn't exist
+    contactUser = new User({
+      name: name || "Unnamed User",
+      uniqueCode: codeToUse,
+      net: 0,
+      totalBorrowed: 0,
+      totalLent: 0,
+      transactions: [],
+      contacts: [],
+    });
+    await contactUser.save();
+    console.log("New contact user created:", contactUser);
   }
 
-  // Check if the contact is already in the current user's contacts list
   const alreadyInContacts = currentUser.contacts.some(
-    (contact) => contact.uniqueCode === uniqueCode
+    (contact) => contact.uniqueCode === codeToUse
   );
+  console.log("Already in contacts:", alreadyInContacts);
 
   if (alreadyInContacts) {
+    console.log("Contact already in user's contacts list");
     return NextResponse.json(
       { error: "This contact is already in your contacts list" },
       { status: 400 }
     );
   }
 
-  // Add the contact to the current user's contacts list
   currentUser.contacts.push({
     name: contactUser.name,
     uniqueCode: contactUser.uniqueCode,
-    relationship: "lent", // Define the relationship as per your logic
   });
-  await currentUser.save();
 
-  // Add the current user to the contact's contacts list
   const alreadyInTheirContacts = contactUser.contacts.some(
     (contact) => contact.uniqueCode === currentUser.uniqueCode
   );
+  console.log("Already in their contacts:", alreadyInTheirContacts);
 
   if (!alreadyInTheirContacts) {
     contactUser.contacts.push({
       name: currentUser.name,
       uniqueCode: currentUser.uniqueCode,
-      relationship: "borrowed", // Define the reverse relationship
     });
     await contactUser.save();
+    console.log("Updated contact user with new contact");
   }
+
+  await currentUser.save();
+  console.log("Current user updated with new contact");
 
   return NextResponse.json({
     success: true,
@@ -136,13 +149,11 @@ export async function DELETE(req) {
 
   await connectMongo();
 
-  // Find the current user
   const currentUser = await User.findById(session.user.id);
   if (!currentUser) {
     return NextResponse.json({ error: "User not found" }, { status: 404 });
   }
 
-  // Find the contact user
   const contactUser = await User.findOne({ uniqueCode });
   if (!contactUser) {
     return NextResponse.json(
@@ -151,7 +162,6 @@ export async function DELETE(req) {
     );
   }
 
-  // Remove the contact from the current user's contacts list
   const contactIndex = currentUser.contacts.findIndex(
     (contact) => contact.uniqueCode === uniqueCode
   );
@@ -165,13 +175,12 @@ export async function DELETE(req) {
 
   currentUser.contacts.splice(contactIndex, 1);
 
-  // Filter transactions related to this contact and calculate totals to remove
-  let totalLentToRemove = 0;
-  let totalBorrowedToRemove = 0;
-
   const relatedTransactions = currentUser.transactions.filter(
     (transaction) => transaction.contact.uniqueCode === uniqueCode
   );
+
+  let totalLentToRemove = 0;
+  let totalBorrowedToRemove = 0;
 
   relatedTransactions.forEach((transaction) => {
     if (transaction.status === "lent") {
@@ -181,24 +190,15 @@ export async function DELETE(req) {
     }
   });
 
-  // Update currentUser's totals
-  currentUser.totalLent = Math.max(
-    0,
-    currentUser.totalLent - totalLentToRemove
-  );
-  currentUser.totalBorrowed = Math.max(
-    0,
-    currentUser.totalBorrowed - totalBorrowedToRemove
-  );
+  currentUser.totalLent -= totalLentToRemove;
+  currentUser.totalBorrowed -= totalBorrowedToRemove;
 
-  // Remove related transactions from the current user's transaction list
   currentUser.transactions = currentUser.transactions.filter(
     (transaction) => transaction.contact.uniqueCode !== uniqueCode
   );
 
   await currentUser.save();
 
-  // Also update the contact user's transactions and totals
   const userIndex = contactUser.contacts.findIndex(
     (contact) => contact.uniqueCode === currentUser.uniqueCode
   );
@@ -209,11 +209,11 @@ export async function DELETE(req) {
     let totalLentToContact = 0;
     let totalBorrowedFromContact = 0;
 
-    const reverseRelatedTransactions = contactUser.transactions.filter(
+    const reverseTransactions = contactUser.transactions.filter(
       (transaction) => transaction.contact.uniqueCode === currentUser.uniqueCode
     );
 
-    reverseRelatedTransactions.forEach((transaction) => {
+    reverseTransactions.forEach((transaction) => {
       if (transaction.status === "borrowed") {
         totalBorrowedFromContact += transaction.amount;
       } else if (transaction.status === "lent") {
@@ -221,17 +221,9 @@ export async function DELETE(req) {
       }
     });
 
-    // Update contactUser's totals
-    contactUser.totalLent = Math.max(
-      0,
-      contactUser.totalLent - totalLentToContact
-    );
-    contactUser.totalBorrowed = Math.max(
-      0,
-      contactUser.totalBorrowed - totalBorrowedFromContact
-    );
+    contactUser.totalLent -= totalLentToContact;
+    contactUser.totalBorrowed -= totalBorrowedFromContact;
 
-    // Remove related transactions from the contact's transaction list
     contactUser.transactions = contactUser.transactions.filter(
       (transaction) => transaction.contact.uniqueCode !== currentUser.uniqueCode
     );
