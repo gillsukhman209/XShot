@@ -9,13 +9,12 @@ import Modal from "../../../../../components/Modal";
 
 export default function ContactDetails() {
   const pathname = usePathname();
-  const contactId = pathname.split("/").pop(); // Extract `contactId` from the URL
+  const contactId = pathname.split("/").pop();
   const [contact, setContact] = useState(null);
   const [transactions, setTransactions] = useState([]);
   const [summary, setSummary] = useState({ lent: 0, borrowed: 0 });
-  const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [showTransactionPopup, setShowTransactionPopup] = useState(false);
-
   const [transactionType, setTransactionType] = useState("borrowed");
   const [transactionAmount, setTransactionAmount] = useState(0);
   const [transactionNote, setTransactionNote] = useState("");
@@ -24,9 +23,7 @@ export default function ContactDetails() {
     const fetchContactDetails = async () => {
       const currentUser = await axios
         .get("/api/auth/user/getCurrentUser")
-        .then((res) => {
-          return res.data.user;
-        });
+        .then((res) => res.data.user);
 
       try {
         const res = await axios.get(
@@ -38,8 +35,6 @@ export default function ContactDetails() {
         const user = currentUser.contacts.find(
           (user) => user.uniqueCode === contact.uniqueCode
         );
-
-        console.log("user is ", user);
 
         const totalLent = user.totalBorrowed;
         const totalBorrowed = user.totalLent;
@@ -79,7 +74,6 @@ export default function ContactDetails() {
         toast.success("Contact deleted successfully");
         window.location.href = "/dashboard";
         setIsModalOpen(false);
-        // Optionally, you can add a callback to refresh the contact list or update the state
       }
     } catch (error) {
       toast.error("An error occurred while deleting the contact");
@@ -87,18 +81,16 @@ export default function ContactDetails() {
   };
 
   const confirmDeleteContact = () => {
-    setIsModalOpen(true); // Open the modal to confirm deletion
+    setIsModalOpen(true);
   };
 
   const handleDeleteTransaction = async (transactionId) => {
-    console.log("Sending Transaction ID:", transactionId);
     try {
       const res = await axios.delete(`/api/mongo/transaction`, {
         data: { transactionId },
       });
       if (res.status === 200) {
         toast.success("Transaction deleted successfully");
-        // Refresh transactions after deletion
         setTransactions((prev) =>
           prev.filter((transaction) => transaction._id !== transactionId)
         );
@@ -136,21 +128,21 @@ export default function ContactDetails() {
   };
 
   return (
-    <div className="container mx-auto py-8 min-h-screen shadow-lg p-6 ">
+    <div className="container mx-auto py-8 px-4 min-h-screen">
       <Header />
-      <div className="flex items-center justify-between  rounded-lg pl-24">
-        <h2 className="mt-6 text-2xl font-bold text-center w-full">
+      <div className="flex flex-col md:flex-row items-center justify-between rounded-lg">
+        <h2 className="mt-6 text-2xl font-bold text-center w-full md:w-auto">
           {contact.name}
         </h2>
         <button
           onClick={confirmDeleteContact}
-          className="rounded bg-indigo-600 px-4 py-2 text-sm text-white hover:bg-indigo-70 mt-6"
+          className="rounded bg-indigo-600 px-4 py-2 text-sm text-white hover:bg-indigo-700 mt-6"
         >
           Delete
         </button>
       </div>
 
-      <section className="grid grid-cols-3 mt-4 gap-4 rounded-lg bg-white p-6 text-center ">
+      <section className="grid grid-cols-1 md:grid-cols-3 mt-4 gap-4 rounded-lg bg-white p-6 text-center">
         <div>
           <h2 className="text-xl font-semibold text-gray-800">Lent</h2>
           <p className="text-3xl font-bold text-green-600">
@@ -175,26 +167,25 @@ export default function ContactDetails() {
         </div>
       </section>
 
-      {/* Transactions Section */}
-      <div className="grid grid-cols-1 gap-4 rounded-2xl p-6  mt-10 bg-white">
+      <div className="grid grid-cols-1 gap-4 rounded-2xl p-6 mt-10 bg-white">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-semibold text-gray-800">Transactions</h2>
           <button
             onClick={() => setShowTransactionPopup(true)}
-            className="flex items-center gap-2 rounded-full bg-gray-800 px-4 py-2 text-lg font-medium text-white  hover:bg-indigo-700"
+            className="flex items-center gap-2 rounded-full bg-gray-800 px-4 py-2 text-lg font-medium text-white hover:bg-indigo-700"
           >
             +
           </button>
         </div>
       </div>
 
-      <ul className="mt-4 space-y-4 rounded-lg p-6">
+      <ul className="mt-4 space-y-4 rounded-lg">
         {transactions.map((transaction) => (
           <li
             key={transaction._id}
-            className="flex h-[120px] w-full items-center justify-between rounded-lg p-4 shadow-xl" // Increased height from 100px to 120px
+            className="flex flex-col h-[120px] sm:w-full w-[90%] md:flex-row md:items-center justify-between rounded-lg p-4 shadow-xl"
           >
-            <div>
+            <div className="flex flex-col items-center md:items-start text-center md:text-left">
               <h3 className="text-lg font-bold text-black">
                 {transaction.status === "lent"
                   ? "You lent to "
@@ -221,9 +212,9 @@ export default function ContactDetails() {
             </div>
             <button
               onClick={() => handleDeleteTransaction(transaction._id)}
-              className="text-red-600 hover:text-red-800 text-xl"
+              className="px-4 py-2 bg-indigo-600 text-white rounded-md mt-4 md:mt-0 "
             >
-              <FaTrash />
+              Delete Transaction
             </button>
           </li>
         ))}
@@ -242,7 +233,7 @@ export default function ContactDetails() {
             Cancel
           </button>
           <button
-            className="px-4 py-2 bg-red-500 rounded-md"
+            className="px-4 py-2 bg-red-500 text-white rounded-md"
             onClick={handleDeleteContact}
           >
             Confirm
@@ -250,12 +241,10 @@ export default function ContactDetails() {
         </div>
       </Modal>
 
-      {/* Popup for adding transaction */}
       {showTransactionPopup && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-10 rounded-lg shadow-lg w-96">
+          <div className="bg-white p-10 rounded-lg shadow-lg w-full max-w-md">
             <h2 className="text-2xl font-semibold">Add Transaction</h2>
-
             <div className="mt-6">
               <label
                 className="block text-lg font-medium text-gray-700"
