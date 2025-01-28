@@ -11,7 +11,7 @@ import { PiArrowFatLinesDown, PiArrowFatLinesUp } from "react-icons/pi";
 export const dynamic = "force-dynamic";
 
 export default function Dashboard() {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState({ contacts: [], transactions: [] });
   const [uniqueCode, setUniqueCode] = useState("");
   const [name, setName] = useState("");
   const [showPopup, setShowPopup] = useState(false);
@@ -43,14 +43,18 @@ export default function Dashboard() {
         toast.error("Please fill either the name or unique code field");
         return;
       }
-      console.log("name", name);
-      console.log("uniqueCode", uniqueCode);
 
       let codeToSend =
         uniqueCode || Math.random().toString(36).substring(2, 10);
 
+      const newContact = {
+        id: Math.random().toString(36).substring(2, 10), // Temporary local ID
+        name: name || "Unnamed Contact",
+        uniqueCode: codeToSend,
+      };
+
       const res = await axios.post("/api/mongo/contact", {
-        name: name || undefined, // Send `undefined` if no name is provided
+        name: name || undefined,
         uniqueCode: codeToSend,
       });
 
@@ -63,6 +67,12 @@ export default function Dashboard() {
       } else {
         toast.error(res.data.error);
       }
+
+      // Update locally in case of delayed API response
+      setUser((prevUser) => ({
+        ...prevUser,
+        contacts: [...prevUser.contacts, newContact],
+      }));
 
       setName("");
       setUniqueCode("");
@@ -78,23 +88,37 @@ export default function Dashboard() {
       return;
     }
 
+    const newTransaction = {
+      id: Math.random().toString(36).substring(2, 10), // Temporary local ID
+      contactUniqueCode: selectedContact,
+      amount: parseFloat(transactionAmount),
+      type: transactionType,
+      note: transactionNote,
+    };
+
     try {
-      const res = await axios.post("/api/mongo/transaction", {
-        contactUniqueCode: selectedContact,
-        amount: transactionAmount,
-        type: transactionType,
-        note: transactionNote,
-      });
+      const res = await axios.post("/api/mongo/transaction", newTransaction);
 
       if (res.status === 200) {
         toast.success("Transaction added successfully");
+        setUser((prevUser) => ({
+          ...prevUser,
+          transactions: [...prevUser.transactions, res.data.transaction],
+        }));
       } else {
         throw new Error(res.data.error || "Failed to add transaction");
       }
 
+      // Update locally in case of delayed API response
+      setUser((prevUser) => ({
+        ...prevUser,
+        transactions: [...prevUser.transactions, newTransaction],
+      }));
+
       setShowTransactionPopup(false);
       setSelectedContact("");
       setTransactionAmount("");
+      setTransactionNote("");
     } catch (error) {
       toast.error(error.message || "An unexpected error occurred");
     }
