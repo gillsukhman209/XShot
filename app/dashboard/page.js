@@ -143,23 +143,29 @@ export default function Dashboard() {
   return (
     <main className="container mx-auto space-y-8 px-4 py-8 min-h-screen">
       <Header />
-      <section className="grid grid-cols-3 gap-4 rounded-lg bg-white p-6 text-center shadow">
+      <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 rounded-lg bg-white p-6 text-center shadow">
         <div>
-          <h2 className="text-xl font-semibold text-gray-800">Lent</h2>
-          <p className="text-3xl font-bold text-green-600">
+          <h2 className="text-lg sm:text-xl font-semibold text-gray-800">
+            Lent
+          </h2>
+          <p className="text-2xl sm:text-3xl font-bold text-green-600">
             ${user?.totalLent?.toLocaleString()}
           </p>
         </div>
         <div>
-          <h2 className="text-xl font-semibold text-gray-800">Borrowed</h2>
-          <p className="text-3xl font-bold text-red-600">
+          <h2 className="text-lg sm:text-xl font-semibold text-gray-800">
+            Borrowed
+          </h2>
+          <p className="text-2xl sm:text-3xl font-bold text-red-600">
             ${user?.totalBorrowed?.toLocaleString()}
           </p>
         </div>
         <div>
-          <h2 className="text-xl font-semibold text-gray-800">Net</h2>
+          <h2 className="text-lg sm:text-xl font-semibold text-gray-800">
+            Net
+          </h2>
           <p
-            className={`text-3xl font-bold ${
+            className={`text-2xl sm:text-3xl font-bold ${
               user?.totalLent - user?.totalBorrowed < 0
                 ? "text-red-600"
                 : "text-green-600"

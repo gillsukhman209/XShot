@@ -32,7 +32,7 @@ function Contact({ contact }) {
       </div>
       <button
         onClick={() => router.push(`/api/mongo/contact/${contact.uniqueCode}`)}
-        className="w-full max-w-[140px] rounded bg-indigo-600 px-4 py-2 text-sm text-white"
+        className="w-full  max-w-[120px] text-xs lg:text-sm lg:max-w-[140px] rounded bg-indigo-600 px-4 py-2  text-white hover:bg-indigo-700"
       >
         View Contact
       </button>

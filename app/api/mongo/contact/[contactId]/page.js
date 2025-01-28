@@ -143,20 +143,21 @@ export default function ContactDetails() {
     <div className="container mx-auto py-8 px-4 min-h-screen">
       <Header />
 
-      <section className="grid grid-cols-1 md:grid-cols-3 mt-4 gap-4 rounded-lg bg-white p-6 text-center">
-        <div>
+      {/* Summary Section */}
+      <section className="grid grid-cols-1 md:grid-cols-3 mt-4 gap-4 rounded-lg bg-white p-6 shadow-lg text-center">
+        <div className="p-4">
           <h2 className="text-xl font-semibold text-gray-800">Lent</h2>
           <p className="text-3xl font-bold text-green-600">
             ${summary.lent.toLocaleString()}
           </p>
         </div>
-        <div>
+        <div className="p-4">
           <h2 className="text-xl font-semibold text-gray-800">Borrowed</h2>
           <p className="text-3xl font-bold text-red-600">
             ${summary.borrowed.toLocaleString()}
           </p>
         </div>
-        <div>
+        <div className="p-4">
           <h2 className="text-xl font-semibold text-gray-800">Net</h2>
           <p
             className={`text-3xl font-bold ${
@@ -168,25 +169,25 @@ export default function ContactDetails() {
         </div>
       </section>
 
-      <div className="rounded-lg">
-        <h2 className="mt-6 text-2xl font-bold text-center w-full md:w-auto ml-4">
-          {contact.name}
-        </h2>
+      {/* Contact Name */}
+      <div className="rounded-lg mt-6">
+        <h2 className="text-2xl font-bold text-center">{contact.name}</h2>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 rounded-2xl p-6 mt-10 bg-white">
+      {/* Transactions Section */}
+      <div className="grid grid-cols-1 gap-4 rounded-2xl p-6 mt-10 bg-white shadow-xl">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-semibold text-gray-800">Transactions</h2>
-          <div className="flex items-center justify-center gap-4">
+          <div className="flex items-center gap-4">
             <button
               onClick={() => setShowTransactionPopup(true)}
-              className="flex h-10 w-10 items-center justify-center rounded-full text-xl bg-white border-[1px] border-gray-300 shadow-2xl "
+              className="h-10 w-10 rounded-full bg-blue-500 text-white hover:bg-blue-600 transition-all"
             >
               +
             </button>
             <button
               onClick={confirmDeleteContact}
-              className="rounded  px-4 py-2 text-4xl text-red-600 "
+              className="h-10 w-10 rounded-full text-red-600 hover:text-red-700 border-red-600 flex items-center justify-center text-3xl"
             >
               <CgTrash />
             </button>
@@ -194,63 +195,75 @@ export default function ContactDetails() {
         </div>
       </div>
 
-      <ul className="mt-4 space-y-4 rounded-lg">
+      {/* Transaction List */}
+      <ul className="mt-4 space-y-4">
         {transactions.map((transaction) => (
           <li
             key={transaction._id}
-            className="flex flex-col h-[120px] sm:w-full w-[90%] md:flex-row md:items-center justify-between rounded-lg p-4 shadow-xl"
+            className="flex justify-between items-center p-4 bg-white shadow-md rounded-lg hover:bg-gray-100 transition-all"
           >
-            <div className="flex flex-col items-center md:items-start text-center md:text-left">
-              <h3 className="text-lg font-bold text-black">
-                {transaction.status === "lent"
-                  ? "You lent to "
-                  : "You borrowed from"}{" "}
-                {transaction.contact.name}
-              </h3>
-              <p className="text-md text-black">
-                {new Date(transaction.date).toLocaleString("en-US", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}{" "}
-                -{" "}
-                <span
-                  className={`font-medium text-md ${
-                    transaction.status === "borrowed"
-                      ? "text-red-600"
-                      : "text-green-600"
-                  }`}
-                >
-                  ${transaction.amount}
+            <div className="flex flex-col md:flex-row md:space-x-6 w-full justify-between">
+              <div>
+                <span className="text-sm text-gray-500">
+                  {transaction.status.charAt(0).toUpperCase() +
+                    transaction.status.slice(1)}
+                </span>{" "}
+                <span className="text-sm text-gray-500">
+                  {transaction.status === "borrowed" ? "from" : "to"}{" "}
+                  {transaction.contact.name}
                 </span>
-              </p>
-              <p className="text-sm text-gray-600">{transaction.note}</p>
+                <p className="font-medium text-md mt-1">
+                  <span
+                    className={`${
+                      transaction.status === "borrowed"
+                        ? "text-red-600"
+                        : "text-green-600"
+                    }`}
+                  >
+                    ${transaction.amount}
+                  </span>{" "}
+                </p>
+                {transaction.note && (
+                  <p className="text-sm text-black">{transaction.note}</p>
+                )}
+              </div>
+
+              <div className="flex justify-between md:flex-col md:items-end ">
+                <p className="text-xs text-gray-500 md:text-sm">
+                  {new Date(transaction.date).toLocaleString("en-US", {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                  })}
+                </p>
+                <button
+                  onClick={() => confirmDeleteTransaction(transaction._id)}
+                  className=" bg-indigo-600  text-white text-xs rounded hover:bg-indigo-700 px-4 py-2 transition-all"
+                >
+                  Delete
+                </button>
+              </div>
             </div>
-            <button
-              onClick={() => confirmDeleteTransaction(transaction._id)}
-              className="px-4 py-2 bg-indigo-600 text-white rounded-md mt-4 md:mt-0"
-            >
-              Delete Transaction
-            </button>
           </li>
         ))}
       </ul>
 
+      {/* Modals */}
       <Modal isModalOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
         <p>
-          This action is irreversible. Are you sure you want to reset your
-          progress?
+          This action is irreversible. Are you sure you want to delete this
+          contact?
         </p>
-        <div className="flex justify-end space-x-4 mt-4">
+        <div className="flex justify-end mt-4 space-x-4">
           <button
-            className="px-4 py-2 bg-gray-300 rounded-md"
             onClick={() => setIsModalOpen(false)}
+            className="px-4 py-2 bg-gray-300 rounded-md"
           >
             Cancel
           </button>
           <button
-            className="px-4 py-2 bg-red-500 text-white rounded-md"
             onClick={handleDeleteContact}
+            className="px-4 py-2 bg-red-500 text-white rounded-md"
           >
             Confirm
           </button>
@@ -265,22 +278,23 @@ export default function ContactDetails() {
           This action is irreversible. Are you sure you want to delete this
           transaction?
         </p>
-        <div className="flex justify-end space-x-4 mt-4">
+        <div className="flex justify-end mt-4 space-x-4">
           <button
-            className="px-4 py-2 bg-gray-300 rounded-md"
             onClick={() => setIsDeleteTransactionModalOpen(false)}
+            className="px-4 py-2 bg-gray-300 rounded-md"
           >
             Cancel
           </button>
           <button
-            className="px-4 py-2 bg-red-500 text-white rounded-md"
             onClick={handleDeleteTransaction}
+            className="px-4 py-2 bg-red-500 text-white rounded-md"
           >
             Confirm
           </button>
         </div>
       </Modal>
 
+      {/* Add Transaction Popup */}
       {showTransactionPopup && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-10 rounded-lg shadow-lg w-full max-w-md">
