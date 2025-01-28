@@ -8,12 +8,13 @@ function Transactions({ transaction }) {
     <div className="flex h-[100px] w-full items-center justify-between rounded-lg p-4 shadow-lg ">
       <div>
         <span className="text-sm text-gray-500">
-          {transaction.status.charAt(0).toUpperCase() +
-            transaction.status.slice(1)}
+          {transaction.status &&
+            transaction.status.charAt(0).toUpperCase() +
+              transaction.status.slice(1)}
         </span>{" "}
         <span className="text-sm text-gray-500">
           {transaction.status === "borrowed" ? "from" : "to"}{" "}
-          {transaction.contact.name}
+          {transaction.contact && transaction.contact.name}
         </span>
         <p className="font-medium text-md mt-1">
           <span

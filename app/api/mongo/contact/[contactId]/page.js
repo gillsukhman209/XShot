@@ -205,8 +205,9 @@ export default function ContactDetails() {
             <div className="flex  md:flex-row md:space-x-6 w-full justify-between">
               <div>
                 <span className="text-sm text-gray-500">
-                  {transaction.status.charAt(0).toUpperCase() +
-                    transaction.status.slice(1)}
+                  {transaction.status &&
+                    transaction.status.charAt(0).toUpperCase() +
+                      transaction.status.slice(1)}
                 </span>{" "}
                 <span className="text-sm text-gray-500">
                   {transaction.status === "borrowed" ? "from" : "to"}{" "}
