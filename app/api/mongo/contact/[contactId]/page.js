@@ -169,15 +169,12 @@ export default function ContactDetails() {
         </div>
       </section>
 
-      {/* Contact Name */}
-      <div className="rounded-lg mt-6">
-        <h2 className="text-2xl font-bold text-center">{contact.name}</h2>
-      </div>
-
       {/* Transactions Section */}
       <div className="grid grid-cols-1 gap-4 rounded-2xl p-6 mt-10 bg-white shadow-xl">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold text-gray-800">Transactions</h2>
+          <h2 className="text-xl font-semibold text-gray-800">
+            Transactions for {contact.name}
+          </h2>
           <div className="flex items-center gap-4">
             <button
               onClick={() => setShowTransactionPopup(true)}
@@ -209,11 +206,11 @@ export default function ContactDetails() {
                     transaction.status.charAt(0).toUpperCase() +
                       transaction.status.slice(1)}
                 </span>{" "}
-                <span className="text-sm text-gray-500">
+                <span className="text-sm font-semibold text-gray-500">
                   {transaction.status === "borrowed" ? "from" : "to"}{" "}
                   {transaction.contact.name}
                 </span>
-                <p className="font-medium text-md mt-1">
+                <p className="font-bold text-md mt-1">
                   <span
                     className={`${
                       transaction.status === "borrowed"

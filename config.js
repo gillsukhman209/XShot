@@ -26,15 +26,14 @@ const config = {
         // Plan name displayed on the pricing page
         name: "Free",
         // Friendly description for the plan
-        description: "Track debts for free with basic features.",
+        description: "Track transactions for free with basic features.",
         // Price displayed (Free Plan)
         price: 0,
         // Anchor price (not applicable for Free Plan)
         priceAnchor: null,
         features: [
-          { name: "Add up to 2 friends" },
-          { name: "Log debts with notes and dates" },
-          { name: "Basic reminders" },
+          { name: "Add up to 1 contact" },
+          { name: "Log transactions with notes and dates" },
         ],
       },
       {
@@ -53,10 +52,7 @@ const config = {
         // Anchor price for discount (if applicable)
         priceAnchor: 5.99,
         features: [
-          { name: "Unlimited friend connections" },
-          { name: "Custom reminders & notifications" },
-          { name: "Debt forgiveness games" },
-          { name: "Export data to CSV or PDF" },
+          { name: "Unlimited contacts" },
           { name: "Priority support" },
         ],
       },

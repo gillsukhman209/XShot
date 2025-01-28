@@ -16,7 +16,7 @@ function Transactions({ transaction }) {
           {transaction.status === "borrowed" ? "from" : "to"}{" "}
           {transaction.contact && transaction.contact.name}
         </span>
-        <p className="font-medium text-md mt-1">
+        <p className="font-bold text-md mt-1 ">
           <span
             className={`${
               transaction.status === "borrowed"

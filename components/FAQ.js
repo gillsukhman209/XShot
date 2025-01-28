@@ -18,9 +18,9 @@ const faqList = [
     question: "Is the app free to use?",
     answer: (
       <p>
-        Yes! The app offers a free plan where you can add up to 1-2 friends. For
-        more features like unlimited friends, reminders, and advanced tools, you
-        can upgrade to our Pro plan.
+        Yes! The app offers a free plan where you can add up to 1 contact. For
+        more features like unlimited contacts and advanced tools, you can
+        upgrade to our Pro plan.
       </p>
     ),
   },
@@ -28,8 +28,8 @@ const faqList = [
     question: "Can I sync my debts with others?",
     answer: (
       <div className="space-y-2 leading-relaxed">
-        Yes! You can sync debts with your friends or family in real time. Both
-        users can view updates to shared debts instantly.
+        Yes! You can sync transactions with your friends or family in real time.
+        Both users can view updates to shared debts instantly.
       </div>
     ),
   },
@@ -39,7 +39,7 @@ const faqList = [
       <div className="space-y-2 leading-relaxed">
         The Pro plan includes:
         <ul className="list-disc list-inside space-y-1">
-          <li>Unlimited friend connections</li>
+          <li>Unlimited contacts</li>
           <li>Customizable reminders and notifications</li>
           <li>Debt forgiveness games</li>
           <li>Export debts to PDF or CSV</li>

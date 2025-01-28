@@ -18,10 +18,10 @@ function Contact({ contact }) {
     <div className="flex h-[100px] w-full items-center justify-between rounded-lg bg-white p-4 shadow-xl">
       <div className="flex items-center gap-3">
         <div>
-          <h3 className="font-bold text-gray-800">{contact.name}</h3>
+          <h3 className="font-semibold text-gray-800">{contact.name}</h3>
           {balance !== 0 && (
             <p
-              className={`text-sm ${
+              className={`text-sm font-semibold ${
                 balance > 0 ? "text-red-600" : "text-green-600"
               }`}
             >
