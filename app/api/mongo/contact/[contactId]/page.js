@@ -202,7 +202,7 @@ export default function ContactDetails() {
             key={transaction._id}
             className="flex justify-between items-center p-4 bg-white shadow-md rounded-lg hover:bg-gray-100 transition-all"
           >
-            <div className="flex flex-col md:flex-row md:space-x-6 w-full justify-between">
+            <div className="flex  md:flex-row md:space-x-6 w-full justify-between">
               <div>
                 <span className="text-sm text-gray-500">
                   {transaction.status.charAt(0).toUpperCase() +
@@ -228,8 +228,8 @@ export default function ContactDetails() {
                 )}
               </div>
 
-              <div className="flex justify-between md:flex-col md:items-end ">
-                <p className="text-xs text-gray-500 md:text-sm">
+              <div className="flex  justify-between  flex-col md:items-end gap-2">
+                <p className="text-xs text-gray-500 md:text-sm ml-4">
                   {new Date(transaction.date).toLocaleString("en-US", {
                     year: "numeric",
                     month: "short",
