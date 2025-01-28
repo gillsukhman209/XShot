@@ -140,6 +140,11 @@ export default function Dashboard() {
     );
   }
 
+  // Sort transactions once and store them in a variable
+  const sortedTransactions = user?.transactions.sort(
+    (a, b) => new Date(b.date) - new Date(a.date)
+  );
+
   return (
     <main className="container mx-auto space-y-8 px-4 py-8 min-h-screen">
       <Header />
@@ -275,8 +280,8 @@ export default function Dashboard() {
               +
             </button>
           </div>
-          {user?.transactions
-            .slice(0, visibleTransactions)
+          {sortedTransactions
+            .slice(0, visibleTransactions) // Use sorted transactions here
             .map((transaction) => (
               <Transactions key={transaction.id} transaction={transaction} />
             ))}
