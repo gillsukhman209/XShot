@@ -3,11 +3,6 @@ import { useRouter } from "next/navigation";
 
 function Transactions({ transaction }) {
   const router = useRouter();
-  const formattedDate = new Date(transaction.date).toLocaleString("default", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
 
   return (
     <div className="flex h-[100px] w-full items-center justify-between rounded-lg p-4 shadow-lg ">
@@ -35,8 +30,8 @@ function Transactions({ transaction }) {
           <p className="text-sm text-black">{transaction.note}</p>
         )}
       </div>
-      <div className="flex justify-between md:flex-col md:items-end md:gap-2">
-        <p className="text-xs text-gray-500 md:text-sm">
+      <div className="flex  justify-between  flex-col md:items-end gap-2">
+        <p className="text-xs text-gray-500 md:text-sm ml-4">
           {new Date(transaction.date).toLocaleString("en-US", {
             year: "numeric",
             month: "short",
