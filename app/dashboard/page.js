@@ -4,7 +4,7 @@ import Header from "./components/Header";
 import axios from "axios";
 import { useEffect } from "react";
 import { toast } from "react-hot-toast";
-
+import ScreenshotGenerator from "./components/ScreenshotGenerator";
 export const dynamic = "force-dynamic";
 
 export default function Dashboard() {
@@ -37,8 +37,9 @@ export default function Dashboard() {
   return (
     <main className="container mx-auto space-y-8 px-4 py-8 min-h-screen">
       <Header />
-      <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 rounded-lg bg-white p-6 text-center shadow">
-        <div className="bg-white p-10 rounded-lg shadow-lg w-96"></div>
+      <section className=" rounded-lg bg-white p-6 text-center shadow min-h-screen">
+        <p>Screenshots left: {user.screenshotsLeft}</p>
+        <ScreenshotGenerator />
       </section>
     </main>
   );
