@@ -60,7 +60,7 @@ const ScreenshotGenerator = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto py-12 px-6 bg-white rounded-xl shadow-lg">
+    <div className="max-w-2xl mx-auto py-12 px-6 bg-white rounded-lg">
       <h2 className="text-3xl font-bold text-center mb-6">
         Generate Social Media Screenshots
       </h2>
@@ -135,16 +135,15 @@ const ScreenshotGenerator = () => {
       {error && <p className="text-red-500 mt-4 text-center">{error}</p>}
 
       {screenshot && (
-        <div className="mt-6 flex flex-col items-center">
-          <h3 className="text-lg font-semibold">Preview</h3>
+        <div className="mt-6 flex flex-col items-center ">
           <Image
             src={screenshot}
             alt="Generated Screenshot"
             width={500}
             height={300}
-            className="mt-4 border rounded-lg shadow-md"
+            className="mt-4 border rounded-lg shadow-2xl"
           />
-          <button className="mt-4 btn btn-success" onClick={handleDownload}>
+          <button className="mt-4 btn btn-primary" onClick={handleDownload}>
             Download Image
           </button>
         </div>

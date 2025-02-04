@@ -38,6 +38,10 @@ export default function Dashboard() {
     <main className="container mx-auto space-y-8 px-4 py-8 min-h-screen">
       <Header />
       <section className=" rounded-lg bg-white p-6 text-center shadow min-h-screen">
+        <h1 className="text-2xl font-bold">
+          Welcome {user.name} to XShot.com, You have the {user.subscriptionPlan}{" "}
+          plan.
+        </h1>
         <ScreenshotGenerator />
       </section>
     </main>

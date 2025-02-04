@@ -8,7 +8,6 @@ export async function POST(req) {
   const { url, hideLikes, hideComments, hideRetweets, hideBookmarks } =
     await req.json();
 
-  console.log(hideLikes, hideComments, hideRetweets, hideBookmarks);
   await connectMongo();
   try {
     const session = await getServerSession(authOptions);
@@ -18,6 +17,7 @@ export async function POST(req) {
     }
 
     const user = await User.findOne({ email: session.user.email });
+    const isFreePlan = user.subscriptionPlan === "free";
 
     if (!user) {
       return Response.json({ error: "User not found" }, { status: 404 });
@@ -152,7 +152,32 @@ export async function POST(req) {
       throw new Error("Tweet not found.");
     }
 
-    // ✅ Take a screenshot of ONLY the tweet
+    await page.evaluate((isFreePlan) => {
+      if (isFreePlan) {
+        const tweetElement = document.querySelector("article");
+        if (!tweetElement) return false; // If tweet not found, exit
+
+        const watermark = document.createElement("div");
+        watermark.innerText = "Screenshot  by XShot.com";
+        watermark.style.position = "absolute";
+        watermark.style.bottom = "45px";
+        watermark.style.right = "5px";
+        watermark.style.fontSize = "14px";
+        watermark.style.fontWeight = "bold";
+        watermark.style.color = "white";
+        watermark.style.background = "rgba(0, 0, 0, 0.7)";
+        watermark.style.padding = "4px 8px";
+        watermark.style.borderRadius = "4px";
+        watermark.style.zIndex = "9999";
+
+        tweetElement.style.position = "relative"; // Ensure container allows absolute positioning
+        tweetElement.appendChild(watermark); // Attach watermark inside the tweet
+
+        return true;
+      }
+      return false;
+    }, isFreePlan);
+
     const screenshotBuffer = await tweetElement.screenshot({
       encoding: "base64",
     });
