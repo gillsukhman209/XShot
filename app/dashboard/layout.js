@@ -16,7 +16,7 @@ export default async function LayoutPrivate({ children }) {
   await connectMongo();
   const user = await User.findById(session.user.id);
 
-  if (!user || !user.hasAccess) {
+  if (!user || !user.subscriptionPlan) {
     redirect("/");
   }
   return <>{children}</>;

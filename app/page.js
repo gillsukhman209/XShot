@@ -23,8 +23,12 @@ export default function Home() {
       try {
         const res = await fetch("/api/auth/user/getCurrentUser");
         const user = await res.json();
+        console.log("user", user);
 
-        if (user?.user?.hasAccess) {
+        if (
+          user?.user?.subscriptionPlan === "monthly" ||
+          user?.user?.subscriptionPlan === "yearly"
+        ) {
           router.push("/dashboard");
         } else {
           setIsChecking(false); // User doesn't have access, show the landing page

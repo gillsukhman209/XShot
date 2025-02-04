@@ -15,10 +15,7 @@ export async function POST(req) {
   const body = await req.text();
   const signature = headers().get("stripe-signature");
 
-  let data;
-  let eventType;
   let event;
-
   try {
     event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
   } catch (err) {
@@ -26,8 +23,7 @@ export async function POST(req) {
     return NextResponse.json({ error: err.message }, { status: 400 });
   }
 
-  data = event.data;
-  eventType = event.type;
+  const { type: eventType, data } = event;
 
   try {
     switch (eventType) {
@@ -41,61 +37,74 @@ export async function POST(req) {
         if (!plan) break;
 
         const customer = await stripe.customers.retrieve(customerId);
-
         let user;
 
         if (userId) {
           user = await User.findById(userId);
         } else if (customer.email) {
-          user = await User.findOne({ email: customer.email });
-
-          if (!user) {
-            user = await User.create({
+          user =
+            (await User.findOne({ email: customer.email })) ||
+            (await User.create({
               email: customer.email,
-              name: customer.name,
-            });
-
-            await user.save();
-          }
+              name: customer.name || "New User",
+            }));
         } else {
-          console.error("No user found");
+          console.error("No user found for checkout session.");
           throw new Error("No user found");
         }
 
-        user.priceId = priceId;
-        user.customerId = customerId;
-        user.hasAccess = true;
+        console.log("plan", plan);
 
-        // Initialize empty friends and debts arrays if not already present
-        user.contacts = user.contacts || [];
-        user.debts = user.debts || [];
-        user.totalLent = 0;
-        user.totalBorrowed = 0;
-        user.net = 0;
+        // ✅ FIX: Convert to lowercase for proper enum match
+        user.customerId = customerId;
+        user.priceId = priceId;
+        user.subscriptionPlan = plan.name.toLowerCase(); // Ensures it matches schema ("monthly", "yearly", "free")
+        user.screenshotsLeft =
+          plan.name.toLowerCase() === "monthly"
+            ? 500
+            : plan.name.toLowerCase() === "yearly"
+            ? 1500
+            : 10; // Free plan default
 
         await user.save();
-
         break;
       }
 
       case "customer.subscription.updated": {
+        console.log("customer.subscription.updated");
         const subscription = data.object;
+        const customerId = subscription.customer;
+        const priceId = subscription.items.data[0].price.id;
+        const plan = configFile.stripe.plans.find((p) => p.priceId === priceId);
 
-        if (subscription.cancel_at_period_end) {
-          console.log("Subscription set to cancel at period end.");
-        }
+        if (!plan) break;
 
+        const user = await User.findOne({ customerId });
+        if (!user) break;
+
+        // ✅ FIX: Convert to lowercase to match schema
+        user.subscriptionPlan = plan.name.toLowerCase();
+        user.screenshotsLeft =
+          plan.name.toLowerCase() === "monthly"
+            ? 500
+            : plan.name.toLowerCase() === "yearly"
+            ? 1500
+            : 10;
+
+        await user.save();
         break;
       }
 
       case "customer.subscription.deleted": {
-        const subscription = await stripe.subscriptions.retrieve(
-          data.object.id
-        );
-        const user = await User.findOne({ customerId: subscription.customer });
+        console.log("customer.subscription.deleted");
+        const customerId = data.object.customer;
+        const user = await User.findOne({ customerId });
 
-        user.hasAccess = false;
-        await user.save();
+        if (user) {
+          user.subscriptionPlan = "free";
+          user.screenshotsLeft = 10; // Reset to free plan limit
+          await user.save();
+        }
 
         break;
       }
@@ -103,12 +112,22 @@ export async function POST(req) {
       case "invoice.paid": {
         const priceId = data.object.lines.data[0].price.id;
         const customerId = data.object.customer;
+        const plan = configFile.stripe.plans.find((p) => p.priceId === priceId);
+
+        if (!plan) break;
 
         const user = await User.findOne({ customerId });
+        if (!user || user.priceId !== priceId) break;
 
-        if (user.priceId !== priceId) break;
+        // ✅ FIX: Ensure correct plan naming
 
-        user.hasAccess = true;
+        user.subscriptionPlan = plan.name.toLowerCase();
+        user.screenshotsLeft =
+          plan.name.toLowerCase() === "monthly"
+            ? 500
+            : plan.name.toLowerCase() === "yearly"
+            ? 1500
+            : 10;
         await user.save();
 
         break;
@@ -118,9 +137,7 @@ export async function POST(req) {
         const customerId = data.object.customer;
         const user = await User.findOne({ customerId });
 
-        user.hasAccess = false;
         await user.save();
-
         break;
       }
 
@@ -128,7 +145,7 @@ export async function POST(req) {
         console.log(`Unhandled event type: ${eventType}`);
     }
   } catch (e) {
-    console.error("Stripe error: " + e.message + " | EVENT TYPE: " + eventType);
+    console.error(`Stripe webhook error: ${e.message} | Event: ${eventType}`);
   }
 
   return NextResponse.json({});

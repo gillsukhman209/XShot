@@ -6,7 +6,7 @@ function Header() {
     <header className="w-full">
       <div className="container mx-auto flex items-center justify-between px-4 py-4">
         <Link href="/" className="text-2xl font-bold text-indigo-600">
-          Track Money
+          XShot
         </Link>
         <nav className="space-x-4">
           {/* <a href="#" className="text-gray-600 hover:text-indigo-600">
