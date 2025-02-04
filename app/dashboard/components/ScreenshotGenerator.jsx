@@ -7,6 +7,12 @@ const ScreenshotGenerator = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  // Toggle states for hiding elements
+  const [hideComments, setHideComments] = useState(false);
+  const [hideBookmarks, setHideBookmarks] = useState(false);
+  const [hideLikes, setHideLikes] = useState(false);
+  const [hideRetweets, setHideRetweets] = useState(false);
+
   const handleGenerate = async () => {
     if (!url.trim()) {
       setError("Please enter a valid URL.");
@@ -20,7 +26,13 @@ const ScreenshotGenerator = () => {
       const response = await fetch("/api/twitter/screenshot", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url }),
+        body: JSON.stringify({
+          url,
+          hideLikes,
+          hideComments,
+          hideBookmarks,
+          hideRetweets,
+        }),
       });
 
       const data = await response.json();
@@ -36,6 +48,17 @@ const ScreenshotGenerator = () => {
     }
   };
 
+  const handleDownload = () => {
+    if (screenshot) {
+      const link = document.createElement("a");
+      link.href = screenshot;
+      link.download = "screenshot.png"; // Set the default file name
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  };
+
   return (
     <div className="max-w-2xl mx-auto py-12 px-6 bg-white rounded-xl shadow-lg">
       <h2 className="text-3xl font-bold text-center mb-6">
@@ -43,7 +66,7 @@ const ScreenshotGenerator = () => {
       </h2>
 
       <div className="flex flex-col gap-4">
-        {/* ✅ UPDATED INPUT FIELD */}
+        {/* ✅ Input field for URL */}
         <input
           type="text"
           placeholder="Enter Tweet or Instagram Post URL"
@@ -52,12 +75,60 @@ const ScreenshotGenerator = () => {
           className="input input-bordered w-full p-3"
         />
 
+        {/* ✅ Toggle switches for customization */}
+        <div className="bg-gray-100 p-4 rounded-lg shadow-sm">
+          <h3 className="font-semibold text-lg mb-3">Customize Screenshot</h3>
+          <div className="flex flex-col gap-3">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={hideComments}
+                onChange={() => setHideComments(!hideComments)}
+                className="toggle toggle-primary"
+              />
+              <span>Hide Comments</span>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={hideRetweets}
+                onChange={() => setHideRetweets(!hideRetweets)}
+                className="toggle toggle-primary"
+              />
+              <span>Hide Retweets</span>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={hideLikes}
+                onChange={() => setHideLikes(!hideLikes)}
+                className="toggle toggle-primary"
+              />
+              <span>Hide Likes</span>
+            </label>
+
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={hideBookmarks}
+                onChange={() => setHideBookmarks(!hideBookmarks)}
+                className="toggle toggle-primary"
+              />
+              <span>Hide Bookmarks</span>
+            </label>
+          </div>
+        </div>
+
         <button
           onClick={handleGenerate}
           disabled={loading}
           className="btn btn-primary w-full"
         >
-          {loading ? "Generating screenshot..." : "Generate Screenshot"}
+          {loading
+            ? "Generating screenshot..."
+            : screenshot
+            ? "Update Screenshot"
+            : "Generate Screenshot"}
         </button>
       </div>
 
@@ -73,10 +144,7 @@ const ScreenshotGenerator = () => {
             height={300}
             className="mt-4 border rounded-lg shadow-md"
           />
-          <button
-            className="mt-4 btn btn-success"
-            onClick={() => window.open(screenshot, "_blank")}
-          >
+          <button className="mt-4 btn btn-success" onClick={handleDownload}>
             Download Image
           </button>
         </div>

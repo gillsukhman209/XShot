@@ -5,6 +5,10 @@ import connectMongo from "@/libs/mongoose";
 import User from "@/models/User";
 
 export async function POST(req) {
+  const { url, hideLikes, hideComments, hideRetweets, hideBookmarks } =
+    await req.json();
+
+  console.log(hideLikes, hideComments, hideRetweets, hideBookmarks);
   await connectMongo();
   try {
     const session = await getServerSession(authOptions);
@@ -18,8 +22,6 @@ export async function POST(req) {
     if (!user) {
       return Response.json({ error: "User not found" }, { status: 404 });
     }
-
-    const { url } = await req.json();
 
     if (!url.includes("x.com") && !url.includes("instagram.com")) {
       return Response.json(
@@ -58,16 +60,19 @@ export async function POST(req) {
 
     // ✅ Wait for the tweet container to appear
     await page.waitForSelector("article"); // Tweets are inside <article> tags
+
     await page.evaluate(() => {
       document.querySelector(
         "#react-root > div > div > div.css-175oi2r.r-1f2l425.r-13qz1uu.r-417010.r-18u37iz > main > div > div > div > div > div > div.css-175oi2r.r-aqfbo4.r-gtdqiz.r-1gn8etr.r-1g40b8q > div:nth-child(1) > div > div > div > div > div"
       ).style.display = "none";
     });
+
     await page.evaluate(() => {
       document.querySelector(
         "#react-root > div > div > div.css-175oi2r.r-1f2l425.r-13qz1uu.r-417010.r-18u37iz > main > div > div > div > div > div > div.css-175oi2r.r-aqfbo4.r-gtdqiz.r-1gn8etr.r-1g40b8q > div:nth-child(1) > div > div > div > div"
       ).style.display = "none";
     });
+
     // ✅ Hide annoying popups before taking a screenshot
     await page.evaluate(() => {
       const popup = document.querySelector(
@@ -77,7 +82,70 @@ export async function POST(req) {
         popup.style.display = "none";
       }
     });
-    // ✅ Select the tweet element
+
+    await page.evaluate(() => {
+      let readRepliesPopup = document.querySelector(
+        "#react-root > div > div > div.css-175oi2r.r-1f2l425.r-13qz1uu.r-417010.r-18u37iz > main > div > div > div > div > div > section > div > div > div:nth-child(1) > div.css-175oi2r.r-1adg3ll.r-1ny4l3l > div > article > div > div > div:nth-child(3) > a"
+      );
+      if (readRepliesPopup) {
+        readRepliesPopup.style.display = "none";
+      }
+    });
+
+    // Hide specific elements based on the user's selection
+    await page.evaluate(
+      (hideLikes, hideComments, hideRetweets, hideBookmarks) => {
+        // Function to hide elements safely
+        const hideElement = (selector) => {
+          const element = document.querySelector(selector);
+          if (element) {
+            element.style.display = "none";
+          }
+        };
+
+        // Hide retweets/reposts
+        if (hideRetweets) {
+          hideElement("button[data-testid='retweet']");
+        }
+
+        // Hide comments/replies
+        if (hideComments) {
+          hideElement("button[data-testid='reply']");
+        }
+
+        // Hide likes
+        if (hideLikes) {
+          hideElement("button[data-testid='like']");
+        }
+
+        // Hide bookmarks
+        if (hideBookmarks) {
+          hideElement("button[data-testid='bookmark']");
+        }
+
+        // Hide annoying popups if they appear
+        const popup = document.querySelector(
+          "#layers > div > div:nth-child(1) > div > div > div"
+        );
+        if (popup) {
+          popup.style.display = "none";
+        }
+      },
+      hideLikes,
+      hideComments,
+      hideRetweets,
+      hideBookmarks
+    );
+
+    // ✅ Hide annoying popups before taking a screenshot
+    await page.evaluate(() => {
+      const popup = document.querySelector(
+        "#layers > div > div:nth-child(1) > div > div > div"
+      ); // X popups usually have this role
+      if (popup) {
+        popup.style.display = "none";
+      }
+    });
     const tweetElement = await page.$("article");
 
     if (!tweetElement) {
@@ -89,9 +157,8 @@ export async function POST(req) {
       encoding: "base64",
     });
 
-    console.log("before", user.screenshotsLeft);
     user.screenshotsLeft -= 1;
-    console.log("after", user.screenshotsLeft);
+
     await user.save();
 
     await browser.close();
