@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Image from "next/image";
-
-const ScreenshotGenerator = () => {
+import Link from "next/link";
+const ScreenshotGenerator = ({ user }) => {
   const [url, setUrl] = useState("");
   const [screenshot, setScreenshot] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -62,7 +62,7 @@ const ScreenshotGenerator = () => {
   return (
     <div className="max-w-2xl mx-auto py-12 px-6 bg-white rounded-lg">
       <h2 className="text-3xl font-bold text-center mb-6">
-        Generate Social Media Screenshots
+        X Screenshots in 1-Click
       </h2>
 
       <div className="flex flex-col gap-4">
@@ -72,19 +72,31 @@ const ScreenshotGenerator = () => {
           placeholder="Enter Tweet or Instagram Post URL"
           value={url}
           onChange={(e) => setUrl(e.target.value)}
-          className="input input-bordered w-full p-3"
+          className="input input-bordered input-primary border-2  w-full p-4 mt-4 "
         />
 
         {/* ✅ Toggle switches for customization */}
+
         <div className="bg-gray-100 p-4 rounded-lg shadow-sm">
-          <h3 className="font-semibold text-lg mb-3">Customize Screenshot</h3>
+          <h3 className="font-semibold text-lg mb-3">
+            Customize Screenshot{" "}
+            {user.subscriptionPlan === "free" && "(Upgrade to customize)"}
+          </h3>
           <div className="flex flex-col gap-3">
             <label className="flex items-center gap-2 cursor-pointer">
               <input
                 type="checkbox"
                 checked={hideComments}
-                onChange={() => setHideComments(!hideComments)}
-                className="toggle toggle-primary"
+                onChange={() =>
+                  user.subscriptionPlan !== "free" &&
+                  setHideComments(!hideComments)
+                }
+                className={`toggle toggle-primary ${
+                  user.subscriptionPlan === "free"
+                    ? "cursor-not-allowed opacity-50"
+                    : ""
+                }`}
+                disabled={user.subscriptionPlan === "free"}
               />
               <span>Hide Comments</span>
             </label>
@@ -92,8 +104,16 @@ const ScreenshotGenerator = () => {
               <input
                 type="checkbox"
                 checked={hideRetweets}
-                onChange={() => setHideRetweets(!hideRetweets)}
-                className="toggle toggle-primary"
+                onChange={() =>
+                  user.subscriptionPlan !== "free" &&
+                  setHideRetweets(!hideRetweets)
+                }
+                className={`toggle toggle-primary ${
+                  user.subscriptionPlan === "free"
+                    ? "cursor-not-allowed opacity-50"
+                    : ""
+                }`}
+                disabled={user.subscriptionPlan === "free"}
               />
               <span>Hide Retweets</span>
             </label>
@@ -101,8 +121,15 @@ const ScreenshotGenerator = () => {
               <input
                 type="checkbox"
                 checked={hideLikes}
-                onChange={() => setHideLikes(!hideLikes)}
-                className="toggle toggle-primary"
+                onChange={() =>
+                  user.subscriptionPlan !== "free" && setHideLikes(!hideLikes)
+                }
+                className={`toggle toggle-primary ${
+                  user.subscriptionPlan === "free"
+                    ? "cursor-not-allowed opacity-50"
+                    : ""
+                }`}
+                disabled={user.subscriptionPlan === "free"}
               />
               <span>Hide Likes</span>
             </label>
@@ -111,25 +138,49 @@ const ScreenshotGenerator = () => {
               <input
                 type="checkbox"
                 checked={hideBookmarks}
-                onChange={() => setHideBookmarks(!hideBookmarks)}
-                className="toggle toggle-primary"
+                onChange={() =>
+                  user.subscriptionPlan !== "free" &&
+                  setHideBookmarks(!hideBookmarks)
+                }
+                className={`toggle toggle-primary ${
+                  user.subscriptionPlan === "free"
+                    ? "cursor-not-allowed opacity-50"
+                    : ""
+                }`}
+                disabled={user.subscriptionPlan === "free"}
               />
               <span>Hide Bookmarks</span>
             </label>
           </div>
         </div>
 
-        <button
-          onClick={handleGenerate}
-          disabled={loading}
-          className="btn btn-primary w-full"
-        >
-          {loading
-            ? "Generating screenshot..."
-            : screenshot
-            ? "Update Screenshot"
-            : "Generate Screenshot"}
-        </button>
+        {user.screenshotsLeft > 0 ? (
+          <button
+            onClick={handleGenerate}
+            disabled={loading}
+            className="btn btn-primary w-full "
+          >
+            {loading
+              ? "Generating screenshot..."
+              : screenshot && user.subscriptionPlan !== "free"
+              ? "Update Screenshot"
+              : "Generate Screenshot"}
+          </button>
+        ) : (
+          <Link href="/dashboard/pricing">
+            <button className="btn btn-success text-white">
+              You have no screenshots left. Upgrade for unlimited screenshots!
+            </button>
+          </Link>
+        )}
+
+        {user.subscriptionPlan === "free" && (
+          <Link href="/dashboard/pricing">
+            <button className="btn btn-success text-white">
+              Upgrade to customize
+            </button>
+          </Link>
+        )}
       </div>
 
       {error && <p className="text-red-500 mt-4 text-center">{error}</p>}
@@ -143,9 +194,18 @@ const ScreenshotGenerator = () => {
             height={300}
             className="mt-4 border rounded-lg shadow-2xl"
           />
-          <button className="mt-4 btn btn-primary" onClick={handleDownload}>
-            Download Image
-          </button>
+          <div className="flex flex-col gap-4">
+            <button className="mt-4 btn btn-primary" onClick={handleDownload}>
+              Download Image
+            </button>
+            {user.subscriptionPlan === "free" && (
+              <Link href="/dashboard/pricing">
+                <button className="btn btn-success text-white">
+                  Remove Watermark + Unlimited Screenshots
+                </button>
+              </Link>
+            )}
+          </div>
         </div>
       )}
     </div>
