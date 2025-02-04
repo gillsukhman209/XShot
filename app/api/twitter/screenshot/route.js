@@ -1,7 +1,24 @@
 import puppeteer from "puppeteer";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/libs/next-auth";
+import connectMongo from "@/libs/mongoose";
+import User from "@/models/User";
 
 export async function POST(req) {
+  await connectMongo();
   try {
+    const session = await getServerSession(authOptions);
+
+    if (!session || !session.user) {
+      return Response.json({ error: "Not authenticated" }, { status: 401 });
+    }
+
+    const user = await User.findOne({ email: session.user.email });
+
+    if (!user) {
+      return Response.json({ error: "User not found" }, { status: 404 });
+    }
+
     const { url } = await req.json();
 
     if (!url.includes("x.com") && !url.includes("instagram.com")) {
@@ -71,6 +88,11 @@ export async function POST(req) {
     const screenshotBuffer = await tweetElement.screenshot({
       encoding: "base64",
     });
+
+    console.log("before", user.screenshotsLeft);
+    user.screenshotsLeft -= 1;
+    console.log("after", user.screenshotsLeft);
+    await user.save();
 
     await browser.close();
 

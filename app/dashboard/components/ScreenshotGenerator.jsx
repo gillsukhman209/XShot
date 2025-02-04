@@ -57,7 +57,7 @@ const ScreenshotGenerator = () => {
           disabled={loading}
           className="btn btn-primary w-full"
         >
-          {loading ? "Loading..." : "Generate Screenshot"}
+          {loading ? "Generating screenshot..." : "Generate Screenshot"}
         </button>
       </div>
 
