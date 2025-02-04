@@ -1,26 +1,6 @@
 import mongoose from "mongoose";
 import toJSON from "./plugins/toJSON";
 
-const contactSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-  },
-  uniqueCode: {
-    type: String,
-    required: true,
-  },
-
-  totalLent: {
-    type: Number,
-    default: 0,
-  },
-  totalBorrowed: {
-    type: Number,
-    default: 0,
-  },
-});
-
 const userSchema = mongoose.Schema(
   {
     name: {
@@ -36,7 +16,7 @@ const userSchema = mongoose.Schema(
     image: {
       type: String,
     },
-    uniqueCode: { type: String, unique: true }, // Unique code for each user
+
     customerId: {
       type: String,
       validate(value) {
@@ -53,55 +33,25 @@ const userSchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    totalLent: {
-      type: Number,
-      default: 0,
+
+    // New fields for the screenshot service
+    subscriptionPlan: {
+      type: String,
+      enum: ["free", "monthly", "yearly"],
+      default: "free",
     },
-    totalBorrowed: {
+    screenshotsLeft: {
       type: Number,
-      default: 0,
+      default: 10, // Default for free plan
     },
-    net: {
-      type: Number,
-      default: 0,
-    },
-    // Additional fields for app functionality
-    contacts: [contactSchema],
-    transactions: [
-      {
-        contact: {
-          type: contactSchema,
-          required: true,
-        },
-        amount: {
-          type: Number,
-          required: true,
-          min: 0.01, // Ensure the amount is greater than 0
-        },
-        note: {
-          type: String,
-          trim: true,
-          maxlength: 255, // Prevent excessively long notes
-        },
-        date: {
-          type: Date,
-          default: Date.now,
-        },
-        status: {
-          type: String,
-          enum: ["borrowed", "lent", "paid"],
-          default: "borrowed",
-        },
-      },
-    ],
   },
   {
-    timestamps: true,
+    timestamps: true, // Automatically adds createdAt & updatedAt fields
     toJSON: { virtuals: true },
   }
 );
 
-// add plugin that converts mongoose to json
+// Add plugin that converts mongoose to JSON
 userSchema.plugin(toJSON);
 
 export default mongoose.models.User || mongoose.model("User", userSchema);
