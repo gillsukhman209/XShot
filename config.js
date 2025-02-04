@@ -2,12 +2,12 @@ import themes from "daisyui/src/theming/themes";
 
 const config = {
   // REQUIRED
-  appName: "Track Money",
+  appName: "XShot",
   // REQUIRED: a short description of your app for SEO tags (can be overwritten)
   appDescription:
-    "A simple and reliable platform to track borrowed and lent money—perfect for friends, clients, and everyone in between.",
+    "XShot is a sleek tool that lets users capture and customize high-quality screenshots of Instagram and Twitter posts. With flexible pricing plans, watermark-free options, and future video integration, XShot is perfect for content creators and social media enthusiasts.",
   // REQUIRED (no https://, not trialing slash at the end, just the naked domain)
-  domainName: "trackmoney",
+  domainName: "xshot",
   crisp: {
     // Crisp website ID. IF YOU DON'T USE CRISP: just remove this => Then add a support email in this config file (mailgun.supportEmail) otherwise customer support won't work.
     id: "",
@@ -19,41 +19,53 @@ const config = {
     plans: [
       {
         // REQUIRED — Plan identifier for Stripe webhook
-        priceId:
-          process.env.NODE_ENV === "development"
-            ? "price_1Qin8nD1jNL8UMZHmAi7RL8U" // Replace with your dev price ID
-            : "price_1Qin8nD1jNL8UMZHmAi7RL8U", // Replace with your live price ID
+        priceId: "price_1QooCORS6Dh7OtvxL1EcfDHi",
         // Plan name displayed on the pricing page
         name: "Free",
         // Friendly description for the plan
-        description: "Track transactions for free with basic features.",
+        description:
+          "Capture up to 10 screenshots per month with a small watermark. Perfect for casual users who need quick social media snapshots.",
         // Price displayed (Free Plan)
         price: 0,
         // Anchor price (not applicable for Free Plan)
         priceAnchor: null,
         features: [
-          { name: "Add up to 1 contact" },
-          { name: "Log transactions with notes and dates" },
+          { name: "10 screenshots per month" },
+          { name: "Includes a watermark" },
         ],
       },
       {
         // Highlighted plan
         isFeatured: true,
-        priceId:
-          process.env.NODE_ENV === "development"
-            ? "price_1Qin96D1jNL8UMZHFPtqEyCP" // Replace with your dev price ID
-            : "price_1Qin96D1jNL8UMZHFPtqEyCP", // Replace with your live price ID
-        // Plan name displayed on the pricing page
-        name: "Pro",
+        priceId: "price_1QooCmRS6Dh7OtvxaOX7Oh8B",
+        name: "Monthly",
         // Friendly description for the plan
-        description: "Unlock unlimited tracking and advanced features.",
+        description:
+          "Get 500 screenshots per month, completely watermark-free. Ideal for content creators and marketers. Cancel anytime!",
         // Price displayed
-        price: 2.99, // Monthly price
+        price: 9.99, // Monthly price
         // Anchor price for discount (if applicable)
-        priceAnchor: 5.99,
+        priceAnchor: 19.99,
         features: [
-          { name: "Unlimited contacts" },
-          { name: "Priority support" },
+          { name: "500 screenshots per month" },
+          { name: "No watermark" },
+        ],
+      },
+      {
+        // Highlighted plan
+        isFeatured: false,
+        priceId: "price_1QooDTRS6Dh7OtvxCIvyBN6B",
+        name: "Yearly",
+        // Friendly description for the plan
+        description:
+          "Get 1500 screenshots per month, completely watermark-free. Ideal for content creators and marketers. Cancel anytime!",
+        // Price displayed
+        price: 89.99, // Monthly price
+        // Anchor price for discount (if applicable)
+        priceAnchor: 199.99,
+        features: [
+          { name: "1500 screenshots per month" },
+          { name: "No watermark" },
         ],
       },
     ],

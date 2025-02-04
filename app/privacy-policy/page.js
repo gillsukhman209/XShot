@@ -34,51 +34,58 @@ const PrivacyPolicy = () => {
           className="leading-relaxed whitespace-pre-wrap"
           style={{ fontFamily: "sans-serif" }}
         >
-          {`Last Updated: 2023-08-25
+          {`Last Updated: February 2025
 
-Thank you for visiting OweTrack ("we," "us," or "our"). This Privacy Policy outlines how we collect, use, and protect your personal and non-personal information when you use our website located at https://owetrack.com (the "Website").
+Thank you for using XShot ("we," "us," or "our"). This Privacy Policy explains how we collect, use, and protect your information when you visit our website at https://xshot.com (the "Website").
 
-By accessing or using the Website, you agree to the terms of this Privacy Policy. If you do not agree with the practices described in this policy, please do not use the Website.
+By using our Website and services, you agree to the terms outlined in this Privacy Policy. If you do not agree, please do not use XShot.
 
 1. Information We Collect
 
 1.1 Personal Data
 
-We collect the following personal information from you:
+We may collect the following personal information:
 
-Name: We collect your name to personalize your experience and communicate with you effectively.
-Email: We collect your email address to send you important information regarding your account, updates, and communication.
-Payment Information: We collect payment details to process your transactions securely. However, we do not store your payment information on our servers. Payments are processed by trusted third-party payment processors.
+- Name: Used to personalize your experience.
+- Email: Used for communication, support, and account-related updates.
+- Payment Information: Payments are securely processed by trusted third-party payment providers. We do not store your payment details.
 
 1.2 Non-Personal Data
 
-We may use web cookies and similar technologies to collect non-personal information such as your IP address, browser type, device information, and browsing patterns. This information helps us to enhance your browsing experience, analyze trends, and improve our services.
+We use cookies and similar technologies to collect non-personal information, including:
+
+- IP address, browser type, and device information.
+- Website usage and interaction patterns.
+- Analytics data to improve our services.
 
 2. Purpose of Data Collection
 
-We collect and use your personal data to provide our debt tracking services. This includes processing transactions, maintaining account information, providing customer support, and keeping you updated about new features or changes.
+We collect and use your data to:
+
+- Provide screenshot customization and download services.
+- Process transactions for premium features.
+- Improve the platform and user experience.
+- Offer customer support.
 
 3. Data Sharing
 
-We do not share your personal data with any third parties except as required for processing payments or service delivery (e.g., sharing your information with payment processors). We do not sell, trade, or rent your personal information to others.
+We **do not sell or rent** your data. We only share necessary data with third-party providers (such as payment processors) to deliver our services.
 
 4. Children's Privacy
 
-OweTrack is not intended for children under the age of 13. We do not knowingly collect personal information from children. If you are a parent or guardian and believe that your child has provided us with personal information, please contact us at the email address provided below.
+XShot is **not intended for users under the age of 13**. If you believe your child has provided personal information, please contact us.
 
 5. Updates to the Privacy Policy
 
-We may update this Privacy Policy from time to time to reflect changes in our practices or for other operational, legal, or regulatory reasons. Any updates will be posted on this page, and we may notify you via email about significant changes.
+We may update this Privacy Policy periodically. Any changes will be reflected on this page, and we may notify users via email.
 
 6. Contact Information
 
-If you have any questions, concerns, or requests related to this Privacy Policy, you can contact us at:
+For questions or concerns, contact us at:
 
-Email: support@owetrack.com
+📧 Email: support@xshot.com
 
-For all other inquiries, please visit our Contact Us page on the Website.
-
-By using OweTrack, you consent to the terms of this Privacy Policy.`}
+By using XShot, you agree to this Privacy Policy.`}
         </pre>
       </div>
     </main>

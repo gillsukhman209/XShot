@@ -2,34 +2,34 @@
 
 import { useRef, useState } from "react";
 
-// <FAQ> component is a list of <Item> component
-// Updated FAQ content for the debt-tracking app
 const faqList = [
   {
-    question: "What is this app about?",
+    question: "What is XShot?",
     answer: (
       <div className="space-y-2 leading-relaxed">
-        Our app helps you track borrowed and lent money with ease. Never forget
-        who owes what, and avoid confusion or arguments over forgotten debts.
+        XShot is a tool that allows you to capture and customize high-quality
+        screenshots of Instagram and Twitter posts. Enhance your content with
+        stylish backgrounds, custom fonts, and watermark-free exports.
       </div>
     ),
   },
   {
-    question: "Is the app free to use?",
+    question: "Is XShot free to use?",
     answer: (
       <p>
-        Yes! The app offers a free plan where you can add up to 1 contact. For
-        more features like unlimited contacts and advanced tools, you can
-        upgrade to our Pro plan.
+        Yes! We offer a free plan with 10 screenshots per month. For advanced
+        customization options, no watermarks, and a higher screenshot limit, you
+        can upgrade to our Monthly or Yearly plan.
       </p>
     ),
   },
   {
-    question: "Can I sync my debts with others?",
+    question: "Can I customize my screenshots?",
     answer: (
       <div className="space-y-2 leading-relaxed">
-        Yes! You can sync transactions with your friends or family in real time.
-        Both users can view updates to shared debts instantly.
+        Absolutely! You can change backgrounds, fonts, aspect ratios, and even
+        add branding elements like watermarks or overlays to make your
+        screenshots stand out.
       </div>
     ),
   },
@@ -39,21 +39,21 @@ const faqList = [
       <div className="space-y-2 leading-relaxed">
         The Pro plan includes:
         <ul className="list-disc list-inside space-y-1">
-          <li>Unlimited contacts</li>
-          <li>Customizable reminders and notifications</li>
-          <li>Debt forgiveness games</li>
-          <li>Export debts to PDF or CSV</li>
+          <li>500 screenshots per month</li>
+          <li>No watermarks</li>
+          <li>Custom backgrounds and themes</li>
+          <li>High-resolution downloads</li>
           <li>Priority support</li>
         </ul>
       </div>
     ),
   },
   {
-    question: "How secure is my data?",
+    question: "Is my data safe?",
     answer: (
       <p>
-        Your data security is our top priority. All information is encrypted,
-        and we do not share your data with any third parties.
+        Yes! We do not store or track your screenshots. Your privacy is our
+        priority, and all processing is done securely without sharing your data.
       </p>
     ),
   },
@@ -65,7 +65,7 @@ const faqList = [
         <a href="mailto:gillsukhman209@gmail.com" className="text-primary">
           gillsukhman209@gmail.com
         </a>
-        . We&apos;re here to help!
+        . We&apos;re happy to help!
       </p>
     ),
   },

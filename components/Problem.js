@@ -44,22 +44,23 @@ const Problem = () => {
     <section className="bg-neutral text-neutral-content">
       <div className="max-w-7xl mx-auto px-8 py-16 md:py-32 text-center">
         <h2 className="max-w-3xl mx-auto font-extrabold text-4xl md:text-5xl tracking-tight mb-6 md:mb-8">
-          Debts are forgotten more often than they’re paid back.
+          Social media posts look better when they stand out.
         </h2>
         <p className="max-w-xl mx-auto text-lg opacity-90 leading-relaxed mb-12 md:mb-20">
-          Keeping track of who owes what can get messy. Let’s make it simple.
+          Stop taking boring screenshots. Instantly create clean, share-worthy
+          visuals from tweets and Instagram posts.
         </p>
 
         <div className="flex flex-col md:flex-row justify-center items-center md:items-start gap-6">
-          <Step emoji="🤔" text="Forget who owes who" />
+          <Step emoji="📸" text="Take plain screenshots" />
 
           <Arrow extraStyle="max-md:-scale-x-100 md:-rotate-90" />
 
-          <Step emoji="😤" text="Try to recall details" />
+          <Step emoji="🎨" text="Customize with styles" />
 
           <Arrow extraStyle="md:-scale-x-100 md:-rotate-90" />
 
-          <Step emoji="😡" text="Arguments happen" />
+          <Step emoji="🚀" text="Stand out on social media" />
         </div>
       </div>
     </section>

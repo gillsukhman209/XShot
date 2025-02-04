@@ -20,7 +20,7 @@ const TOS = () => {
           >
             <path
               fillRule="evenodd"
-              d="M15 10a.75.75.75H7.612l2.158 1.96a.75.75 0 11-1.04 1.08l-3.5-3.25a.75.75 0 010-1.08l3.5-3.25a.75.75 0 111.04 1.08L7.612 9.25h6.638A.75.75 0 0115 10z"
+              d="M15 10a.75.75 0 01-.75.75H7.612l2.158 1.96a.75.75 0 11-1.04 1.08l-3.5-3.25a.75.75 0 010-1.08l3.5-3.25a.75.75 0 111.04 1.08L7.612 9.25h6.638A.75.75 0 0115 10z"
               clipRule="evenodd"
             />
           </svg>
@@ -34,27 +34,27 @@ const TOS = () => {
           className="leading-relaxed whitespace-pre-wrap"
           style={{ fontFamily: "sans-serif" }}
         >
-          {`Last Updated: September 26, 2023
+          {`Last Updated: February 2025
 
-Welcome to OweTrack!
+Welcome to XShot!
 
-These Terms of Service ("Terms") govern your use of the OweTrack website at https://owetrack.com ("Website") and the services provided by OweTrack. By using our Website and services, you agree to these Terms.
+These Terms of Service ("Terms") govern your use of the XShot website at https://xshot.com ("Website") and the services provided by XShot. By using our Website and services, you agree to these Terms.
 
-1. Description of OweTrack
+1. Description of XShot
 
-OweTrack is a platform designed to help users track and manage borrowed and lent money with ease.
+XShot is a platform that allows users to capture, customize, and download high-quality screenshots of Twitter and Instagram posts.
 
 2. Ownership and Usage Rights
 
-When you create an account with OweTrack, you gain access to tools that allow you to record, track, and manage financial transactions. All data entered remains owned by the user. OweTrack retains the right to improve its platform and features without notice.
+When you use XShot, you gain access to tools that let you generate and edit social media screenshots. You retain ownership of any content you create. XShot reserves the right to enhance its platform and features without prior notice.
 
 3. User Data and Privacy
 
-We collect and store user data, including name, email, and payment information, as necessary to provide our services. For details on how we handle your data, please refer to our Privacy Policy at https://owetrack.com/privacy-policy.
+We collect and store user data, including name, email, and payment information, as necessary to provide our services. For details on how we handle your data, please refer to our Privacy Policy at https://xshot.com/privacy-policy.
 
 4. Non-Personal Data Collection
 
-We use web cookies to collect non-personal data for the purpose of improving our services and user experience.
+We use web cookies and analytics to collect non-personal data for the purpose of improving our services and user experience.
 
 5. Governing Law
 
@@ -64,9 +64,9 @@ These Terms are governed by the laws of California, United States.
 
 We may update these Terms from time to time. Users will be notified of any changes via email.
 
-For any questions or concerns regarding these Terms of Service, please contact us at support@owetrack.com.
+For any questions or concerns regarding these Terms of Service, please contact us at support@xshot.com.
 
-Thank you for using OweTrack!`}
+Thank you for using XShot!`}
         </pre>
       </div>
     </main>

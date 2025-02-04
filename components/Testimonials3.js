@@ -4,20 +4,20 @@ import config from "@/config";
 // The list of your testimonials. It needs 3 items to fill the row.
 const list = [
   {
-    username: "john_doe",
-    name: "John Doe",
-    text: "This app completely changed how I manage borrowed and lent money. No more confusion or awkward arguments—just simple tracking!",
+    username: "creator_hub",
+    name: "Mark Thompson",
+    text: "This tool makes capturing and customizing social media posts effortless! My content looks so much more professional now.",
     img: "https://via.placeholder.com/150", // Replace with an actual avatar or placeholder image
   },
   {
-    username: "jane_smith",
-    name: "Jane Smith",
-    text: "I used to struggle remembering who owes what, but now it's all in one place. The reminders are a lifesaver!",
+    username: "designqueen",
+    name: "Sophia Lee",
+    text: "I love how easy it is to turn tweets into stunning visuals. The customization options make my posts stand out!",
   },
   {
-    username: "alex92",
-    name: "Alex Carter",
-    text: "Such a simple yet powerful tool. It’s like having a financial assistant for my personal debts. Highly recommended!",
+    username: "trendmaker92",
+    name: "James Carter",
+    text: "This app saved me so much time! No more manual cropping or bad screenshots—just clean, polished images in seconds.",
   },
 ];
 
@@ -77,12 +77,13 @@ const Testimonials3 = () => {
         <div className="flex flex-col text-center w-full mb-20">
           <div className="mb-8">
             <h2 className="sm:text-5xl text-4xl font-extrabold text-base-content">
-              Thousands are tracking their debts effortlessly!
+              Creators love turning posts into stunning visuals!
             </h2>
           </div>
           <p className="lg:w-2/3 mx-auto leading-relaxed text-base text-base-content/80">
-            Don&apos;t just take our word for it. Here&apos;s what our users are
-            saying about how this app has made managing debts stress-free.
+            Don&apos;t just take our word for it. See how our users are
+            effortlessly transforming tweets and Instagram posts into
+            share-worthy content.
           </p>
         </div>
 
