@@ -18,16 +18,10 @@ const config = {
     // Create multiple plans in your Stripe dashboard, then add them here.
     plans: [
       {
-        // REQUIRED — Plan identifier for Stripe webhook
         priceId: "price_1QooCORS6Dh7OtvxL1EcfDHi",
-        // Plan name displayed on the pricing page
         name: "Free",
-        // Friendly description for the plan
-        description:
-          "Capture up to 10 screenshots per month with a small watermark. Perfect for casual users who need quick social media snapshots.",
-        // Price displayed (Free Plan)
+        description: "10 screenshots/month with a small watermark.",
         price: 0,
-        // Anchor price (not applicable for Free Plan)
         priceAnchor: null,
         features: [
           { name: "10 screenshots per month" },
@@ -35,16 +29,11 @@ const config = {
         ],
       },
       {
-        // Highlighted plan
         isFeatured: true,
         priceId: "price_1QooCmRS6Dh7OtvxaOX7Oh8B",
         name: "Monthly",
-        // Friendly description for the plan
-        description:
-          "Get 500 screenshots per month, completely watermark-free. Ideal for content creators and marketers. Cancel anytime!",
-        // Price displayed
-        price: 9.99, // Monthly price
-        // Anchor price for discount (if applicable)
+        description: "500 screenshots/month, no watermark. Cancel anytime!",
+        price: 9.99,
         priceAnchor: 19.99,
         features: [
           { name: "500 screenshots per month" },
@@ -52,16 +41,11 @@ const config = {
         ],
       },
       {
-        // Highlighted plan
         isFeatured: false,
         priceId: "price_1QooDTRS6Dh7OtvxCIvyBN6B",
         name: "Yearly",
-        // Friendly description for the plan
-        description:
-          "Get 1500 screenshots per month, completely watermark-free. Ideal for content creators and marketers. Cancel anytime!",
-        // Price displayed
-        price: 89.99, // Monthly price
-        // Anchor price for discount (if applicable)
+        description: "1500 screenshots/month, no watermark. Cancel anytime!",
+        price: 89.99,
         priceAnchor: 199.99,
         features: [
           { name: "1500 screenshots per month" },

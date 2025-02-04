@@ -7,7 +7,6 @@ const list = [
     username: "creator_hub",
     name: "Mark Thompson",
     text: "This tool makes capturing and customizing social media posts effortless! My content looks so much more professional now.",
-    img: "https://via.placeholder.com/150", // Replace with an actual avatar or placeholder image
   },
   {
     username: "designqueen",
@@ -29,7 +28,7 @@ const Testimonial = ({ i }) => {
 
   return (
     <li key={i}>
-      <figure className="relative max-w-lg h-full p-6 md:p-10 bg-base-200 rounded-2xl max-md:text-sm flex flex-col">
+      <figure className="relative max-w-lg h-full p-6 md:p-10 bg-base-200 rounded-2xl max-md:text-sm flex flex-col border-2 border-primary">
         <blockquote className="relative flex-1">
           <p className="text-base-content/80 leading-relaxed">
             {testimonial.text}
@@ -38,7 +37,7 @@ const Testimonial = ({ i }) => {
         <figcaption className="relative flex items-center justify-start gap-4 pt-4 mt-4 md:gap-8 md:pt-8 md:mt-8 border-t border-base-content/5">
           <div className="w-full flex items-center justify-between gap-2">
             <div>
-              <div className="font-medium text-base-content md:mb-0.5">
+              <div className="font-medium text-base-content md:mb-0.5 text-primary">
                 {testimonial.name}
               </div>
               {testimonial.username && (

@@ -2,7 +2,7 @@ import Image from "next/image";
 import TestimonialsAvatars from "./TestimonialsAvatars";
 import ButtonSignin from "./ButtonSignin";
 import { useSession } from "next-auth/react";
-import ButtonCheckout from "./ButtonCheckout";
+import Link from "next/link";
 
 const Hero = () => {
   const { data: session } = useSession();
@@ -20,7 +20,9 @@ const Hero = () => {
         </p>
 
         {session && session.user ? (
-          <ButtonCheckout text="Buy Now" />
+          <Link href="/#pricing" className="btn btn-primary w-full">
+            Get Started
+          </Link>
         ) : (
           <ButtonSignin extraStyle={"btn-primary"} text="Get Started" />
         )}
