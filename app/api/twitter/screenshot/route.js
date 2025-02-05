@@ -162,7 +162,7 @@ export async function POST(req) {
         watermark.style.position = "absolute";
         watermark.style.bottom = "45px";
         watermark.style.right = "5px";
-        watermark.style.fontSize = "25px";
+        watermark.style.fontSize = "22px";
         watermark.style.fontWeight = "bold";
         watermark.style.color = "white";
         watermark.style.background = "rgba(0, 0, 0, 0.7)";

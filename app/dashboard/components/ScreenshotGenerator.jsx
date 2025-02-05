@@ -176,7 +176,7 @@ const ScreenshotGenerator = ({ user }) => {
 
         {user.subscriptionPlan === "free" && !screenshot && (
           <Link href="/dashboard/pricing">
-            <button className="btn btn-success text-white">
+            <button className="btn btn-success  text-white w-full">
               Upgrade to customize
             </button>
           </Link>
@@ -194,12 +194,9 @@ const ScreenshotGenerator = ({ user }) => {
             height={300}
             className="mt-4 border rounded-lg shadow-2xl"
           />
-          <div className="flex flex-col gap-4">
-            <button className="mt-4 btn btn-primary" onClick={handleDownload}>
-              Download Image
-            </button>
-            {user.subscriptionPlan !== "free" && screenshot && (
-              <div className="flex gap-3 items-center">
+          <div className="flex flex-col ">
+            {screenshot && (
+              <div className="flex items-center mt-4 ">
                 <select
                   value={fileType}
                   onChange={(e) => setFileType(e.target.value)}
@@ -210,11 +207,18 @@ const ScreenshotGenerator = ({ user }) => {
                   <option value="jpg">JPG</option>
                   <option value="jpeg">JPEG</option>
                 </select>
+                <button
+                  className="ml-3 btn btn-primary"
+                  onClick={handleDownload}
+                >
+                  Download Image
+                </button>
               </div>
             )}
+
             {user.subscriptionPlan === "free" && (
               <Link href="/dashboard/pricing">
-                <button className="btn btn-success text-white">
+                <button className="btn btn-success text-white mt-4">
                   Remove Watermark + Unlimited Screenshots
                 </button>
               </Link>
