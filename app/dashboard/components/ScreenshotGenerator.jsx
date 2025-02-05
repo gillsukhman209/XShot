@@ -6,6 +6,7 @@ const ScreenshotGenerator = ({ user }) => {
   const [screenshot, setScreenshot] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [fileType, setFileType] = useState("png"); // State for file type selection
 
   // Toggle states for hiding elements
   const [hideComments, setHideComments] = useState(false);
@@ -52,7 +53,7 @@ const ScreenshotGenerator = ({ user }) => {
     if (screenshot) {
       const link = document.createElement("a");
       link.href = screenshot;
-      link.download = "screenshot.png"; // Set the default file name
+      link.download = `screenshot.${fileType}`; // Set the file name based on selected type
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -76,7 +77,6 @@ const ScreenshotGenerator = ({ user }) => {
         />
 
         {/* ✅ Toggle switches for customization */}
-
         <div className="bg-gray-100 p-4 rounded-lg shadow-sm">
           <h3 className="font-semibold text-lg mb-3">
             Customize Screenshot{" "}
@@ -163,7 +163,7 @@ const ScreenshotGenerator = ({ user }) => {
             {loading
               ? "Generating screenshot..."
               : screenshot && user.subscriptionPlan !== "free"
-              ? "Update Screenshot"
+              ? "Customize Screenshot"
               : "Generate Screenshot"}
           </button>
         ) : (
@@ -174,7 +174,7 @@ const ScreenshotGenerator = ({ user }) => {
           </Link>
         )}
 
-        {user.subscriptionPlan === "free" && (
+        {user.subscriptionPlan === "free" && !screenshot && (
           <Link href="/dashboard/pricing">
             <button className="btn btn-success text-white">
               Upgrade to customize
@@ -198,6 +198,20 @@ const ScreenshotGenerator = ({ user }) => {
             <button className="mt-4 btn btn-primary" onClick={handleDownload}>
               Download Image
             </button>
+            {user.subscriptionPlan !== "free" && screenshot && (
+              <div className="flex gap-3 items-center">
+                <select
+                  value={fileType}
+                  onChange={(e) => setFileType(e.target.value)}
+                  className="select select-bordered p-2 w-full text-center "
+                >
+                  <option value=""></option>
+                  <option value="png">PNG</option>
+                  <option value="jpg">JPG</option>
+                  <option value="jpeg">JPEG</option>
+                </select>
+              </div>
+            )}
             {user.subscriptionPlan === "free" && (
               <Link href="/dashboard/pricing">
                 <button className="btn btn-success text-white">

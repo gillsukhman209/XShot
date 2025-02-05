@@ -180,6 +180,8 @@ export async function POST(req) {
 
     const screenshotBuffer = await tweetElement.screenshot({
       encoding: "base64",
+      type: "jpeg",
+      quality: 100,
     });
 
     user.screenshotsLeft -= 1;
